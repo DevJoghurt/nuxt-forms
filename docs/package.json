@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "simple-forms-docs",
+  "name": "nuxt-simple-forms-docs",
   "version": "0.0.0",
   "scripts": {
     "dev": "nuxi dev",

@@ -1,7 +1,7 @@
 {
   "private": true,
   "version": "0.0.1",
-  "name": "simple-forms-playground",
+  "name": "nuxt-simple-forms-playground",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",

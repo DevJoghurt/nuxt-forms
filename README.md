@@ -1,1 +1,1 @@
-# Simple Forms for Vue3
+# Simple Forms for Nuxt3
