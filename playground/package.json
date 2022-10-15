@@ -1,7 +1,7 @@
 {
   "private": true,
   "version": "0.0.1",
-  "name": "nuxt-simple-forms-playground",
+  "name": "nuxt-forms-playground",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
@@ -11,6 +11,6 @@
   "devDependencies": {
     "nuxt": "3.0.0-rc.11",
     "@nuxtjs/tailwindcss": "^5.3.5",
-    "simple-forms": "latest"
+    "nuxt-forms": "latest"
   }
 }

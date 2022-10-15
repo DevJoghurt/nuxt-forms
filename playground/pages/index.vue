@@ -5,7 +5,7 @@
         Test
       </h1>
       <div>
-        <SimpleForm
+        <NuxtForm
           v-model="formdata"
           lang="en"
           :locales="{
@@ -54,7 +54,7 @@
               Submit
             </button>
           </div>
-        </SimpleForm>
+        </NuxtForm>
       </div>
     </div>
   </section>

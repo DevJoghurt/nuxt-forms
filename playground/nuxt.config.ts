@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   modules: [
     '@nuxtjs/tailwindcss',
-    'simple-forms'
+    'nuxt-forms'
   ],
   tailwindcss: {
     configPath: '~/playground/tailwind.config.js'

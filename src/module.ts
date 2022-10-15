@@ -8,8 +8,8 @@ export interface ModuleOptions {
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
-    name: 'simple-forms',
-    configKey: 'simpleforms',
+    name: 'nuxt-forms',
+    configKey: 'nuxtforms',
     compatibility: {
       nuxt: '^3.0.0-rc.3'
     }
@@ -36,8 +36,8 @@ export default defineNuxtModule<ModuleOptions>({
       name: 'useFormChild'
     })
     addComponent({
-      name: 'SimpleForm',
-      filePath: `${resolve(runtimeDir, 'components')}/simple-form.vue`
+      name: 'NuxtForm',
+      filePath: `${resolve(runtimeDir, 'components')}/nuxt-form.vue`
     })
     addComponent({
       name: 'FormChild',
