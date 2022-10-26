@@ -37,6 +37,12 @@
             </div>
             <input type="password" class="w-60 h-8 border" :value="value" @input="event => update((event.target as HTMLInputElement).value)">
           </FormChild>
+          <FormChild v-slot="{error,value, update}" name="tel" :rules="['tel']">
+            <div v-if="error" class="text-red-500">
+              {{ error }}
+            </div>
+            <input type="tel" class="w-60 h-8 border" name="tel" :value="value" @input="event => update((event.target as HTMLInputElement).value)">
+          </FormChild>
           <FormChild v-slot="{error,value, update}" name="privacy" :rules="['approval']">
             <div class="relative flex items-start mt-2">
               <div v-if="error" class="text-red-500">

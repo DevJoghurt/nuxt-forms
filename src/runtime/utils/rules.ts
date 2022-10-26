@@ -1,13 +1,13 @@
 import type { LocaleTypes } from './locales'
 
-export type DefaultRuleTypes = 'email' | 'required' | 'password_length' | 'password_uppercase' | 'password_lowercase' | 'password_number' | 'password_special' | 'is_true'
+export type DefaultRuleTypes = 'email' | 'tel' | 'required' | 'password_length' | 'password_uppercase' | 'password_lowercase' | 'password_number' | 'password_special' | 'is_true'
 
 export interface Rule {
     validator: (key: string) => boolean,
     error: keyof LocaleTypes | string
 }
 
-export type RulesetTypes = 'email' | 'password' | 'required' | 'approval'
+export type RulesetTypes = 'email' | 'password' | 'required' | 'approval' | 'tel'
 
 export type Rulesets = Record <RulesetTypes, DefaultRuleTypes[]>
 
@@ -29,6 +29,13 @@ const defaultRules = {
       return re.test(String(value).toLowerCase())
     },
     error: 'email_invalid'
+  },
+  tel: {
+    validator: (value: string) => {
+      const re = /^[+]?[\s./0-9]*[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/g
+      return re.test(String(value))
+    },
+    error: 'tel_invalid'
   },
   is_true: {
     validator: (value: any) => value === true,
@@ -73,6 +80,7 @@ const defaultRules = {
 } as DefaultRules
 
 const defaultRulesets = {
+  tel: ['tel'],
   email: ['email'],
   required: ['required'],
   approval: ['is_true'],
