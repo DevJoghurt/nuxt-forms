@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "nuxt-simple-forms-docs",
+  "name": "nuxt-forms-docs",
   "version": "0.0.0",
   "scripts": {
     "dev": "nuxi dev",
@@ -9,7 +9,7 @@
     "preview": "nuxi preview"
   },
   "devDependencies": {
-    "content-wind": "latest",
+    "content-wind": "^0.1.2",
     "nuxt": "^3.0.0-rc.11"
   }
 }

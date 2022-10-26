@@ -1,11 +1,10 @@
 {
     "name": "nuxt-forms",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "license": "MIT",
     "type": "module",
     "workspaces": [
-        "playground",
-        "docs"
+        "playground"
     ],
     "author": {
         "name": "Johannes Hof <johannes@disedia.com>",
@@ -26,15 +25,15 @@
         "build": "yarn dev:prepare && nuxt-module-build",
         "dev": "nuxi dev playground",
         "dev:prepare": "yarn nuxt-module-build --stub && nuxi prepare playground",
-        "docs:dev": "nuxi dev docs",
         "lint": "eslint --ext .js,.ts,.vue ."
     },
     "dependencies": {
-        "@nuxt/kit": "^3.0.0-rc.11"
+        "@nuxt/kit": "^3.0.0-rc.12"
     },
     "devDependencies": {
         "eslint": "^8.25.0",
         "@nuxtjs/eslint-config-typescript": "^11.0.0",
-        "@nuxt/module-builder": "^0.1.7"
+        "@nuxt/module-builder": "^0.2.0",
+        "@nuxt/schema": "^3.0.0-rc.12"
     }
 }

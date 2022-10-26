@@ -11,6 +11,7 @@
           :locales="{
             test: 'Email must be test@test.de'
           }"
+          :csrf="true"
           @submit="submit"
         >
           <FormChild

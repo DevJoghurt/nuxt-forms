@@ -5,6 +5,9 @@ export default defineNuxtConfig({
     'nuxt-forms'
   ],
   tailwindcss: {
-    configPath: '~/playground/tailwind.config.js'
+    configPath: '~/playground/tailwind.config.js' 
+  },
+  forms: {
+    
   }
 })
