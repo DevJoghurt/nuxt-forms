@@ -17,6 +17,7 @@ export type FormProps = {
   lang?: 'en' | 'de' | 'es' | 'fr' | 'it',
   locales?: LocaleTypes,
   modelValue?: object | null
+  clearOnSubmit?: boolean
 }
 
 export type FormChildProps = {
@@ -129,6 +130,10 @@ export function useForm (props: FormProps, emits: FormEmits) {
         emits('update:modelValue', modelValueResult)
       }
       emits('submit', result, dataPassThrough)
+      // clear form data
+      if (props.clearOnSubmit) {
+        reInitializeData({})
+      }
     }
   }
 

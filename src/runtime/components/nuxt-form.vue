@@ -21,10 +21,11 @@ export type SubmitResult = {
         valid: boolean
     }
 export type FormProps = {
-        lang?: 'en' | 'de' | 'es' | 'fr' | 'it',
-        locales?: LocaleTypes | null,
-        modelValue?: object | null,
-        csrf?: boolean,
+        lang?: 'en' | 'de' | 'es' | 'fr' | 'it'
+        locales?: LocaleTypes | null
+        modelValue?: object | null
+        csrf?: boolean
+        clearOnSubmit?: boolean
     }
 export type FormEmits = {
         (eventName: 'update:modelValue', value: object): void
@@ -39,6 +40,7 @@ const props = withDefaults(defineProps<FormProps>(), {
   lang: 'en',
   locales: null,
   modelValue: null,
+  clearOnSubmit: true,
   csrf: false
 })
 

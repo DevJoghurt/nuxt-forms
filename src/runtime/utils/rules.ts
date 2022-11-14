@@ -24,21 +24,25 @@ type Data = {
 
 const defaultRules = {
   email: {
-    validator: (value: string) => {
+    validator: (value: string | null) => {
+      if (value === null) { return true }
       const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       return re.test(String(value).toLowerCase())
     },
     error: 'email_invalid'
   },
   tel: {
-    validator: (value: string) => {
+    validator: (value: string | null) => {
+      if (value === null) { return true }
       const re = /^[+]?[\s./0-9]*[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/g
       return re.test(String(value))
     },
     error: 'tel_invalid'
   },
   is_true: {
-    validator: (value: any) => value === true,
+    validator: (value: any) => {
+      return value === true || value === 'true' || value === 1 || value === '1' || value === 'on' || value === null
+    },
     error: 'is_true'
   },
   required: {
