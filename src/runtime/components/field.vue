@@ -1,5 +1,7 @@
 <template>
+  <div>
     <slot :errors="errors" :valid="valid" :value="value" :updateValue="updateValue" />
+  </div>
 </template>
 <script setup lang="ts">
 import { useField } from '../composables/useField'

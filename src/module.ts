@@ -47,13 +47,13 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.build.transpile.push(runtimeDir)
 
     addImports([{
-      from: resolve(runtimeDir, 'composables/useForm.ts'),
+      from: resolve(runtimeDir, 'composables/useForm'),
       name: 'useForm'
     }, {
-      from: resolve(runtimeDir, 'composables/useField.ts'),
+      from: resolve(runtimeDir, 'composables/useField'),
       name: 'useField'
     }, {
-      from: resolve(runtimeDir, 'composables/useValidation.ts'),
+      from: resolve(runtimeDir, 'composables/useValidation'),
       name: 'useValidation'
     }])
     addComponent({

@@ -1,4 +1,4 @@
-import {  email, required, min, max, regex, url, between, confirmed, length, one_of, not_one_of, ext, image } from '@vee-validate/rules'
+import {  email, required, min, max, regex, url, between, confirmed, length, one_of, not_one_of, ext, image  } from '@vee-validate/rules'
 import { isRef } from '#imports'
 import { getFormLocales } from '#build/form.imports'
 import type { Locales, ValidationRuleFunction } from '../types'
