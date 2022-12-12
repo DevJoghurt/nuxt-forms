@@ -2,7 +2,7 @@ import { reactive, inject, onMounted, onBeforeUnmount, toRefs, isRef } from '#im
 import { getValueByProperty, createObjectValueByKey, interpolate, isCallable } from '../utils/helpers'
 import { FormContextKey } from '../utils/symbols'
 import { klona } from 'klona/lite'
-import type { FieldOptions, FieldData, FormContext, ValidationRule } from '../../types'
+import type { FieldOptions, FieldData, FormContext, ValidationRule } from '../types'
 import { ZodTypeAny } from 'zod'
 
 
@@ -23,6 +23,7 @@ export function useField (name: string,options: FieldOptions) {
     const formObjectField = {}
     if(formContext?.schema){
       createObjectValueByKey(formObjectField, name, true)
+      // @ts-ignore
       formFieldSchema  = formContext.schema.pick(formObjectField)
     }
     // if field schema is defined get default value from schema if available

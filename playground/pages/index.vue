@@ -25,7 +25,7 @@
             </Field>
             <Field 
               v-slot="{valid, errors,value, updateValue}" 
-              :rules="[required, min(8)]"
+              :rules="[required, min(4)]"
               :validate-on-change="true"
               label="Password"
               name="password">

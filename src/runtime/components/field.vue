@@ -3,7 +3,7 @@
 </template>
 <script setup lang="ts">
 import { useField } from '../composables/useField'
-import type { ValidationRule } from '../../types'
+import type { ValidationRule } from '../types'
 import type { ZodTypeAny } from 'zod'
 
 

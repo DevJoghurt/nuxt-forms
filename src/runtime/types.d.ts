@@ -12,12 +12,6 @@ export type ValidationRule = {
   validate: ValidationRuleFunction
 }
 
-// Form component types
-export type FormEmits = {
-    (eventName: 'update:modelValue', value: object): void
-    (eventName: 'submit', result: SubmitResult, dataPassThrough: any): void
-}
-
 export type FormOptions = {
   initialData?: object | null
   clearOnSubmit?: boolean
@@ -40,7 +34,7 @@ export type FieldContext = {
 }
 
 export type FormContext = {
-  schema?: ZodObject
+  schema?: ZodTypeAny
   bind: (field: FieldContext) => void
   unbind: (name: string) => void
 }

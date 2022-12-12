@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'url'
 import { defineNuxtModule, createResolver, addComponent, addImports, addTemplate } from '@nuxt/kit'
 import { generateLocalesImports } from './templates'
-import type { Locales } from './types'
+import type { Locales } from './runtime/types'
 
 export interface ModuleOptions {
   locales: Locales[]

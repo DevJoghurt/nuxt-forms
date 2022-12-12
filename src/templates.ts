@@ -1,5 +1,5 @@
 import { genImport, genArrayFromRaw } from 'knitwork'
-import type { Locales } from './types'
+import type { Locales } from './runtime/types'
 
 export function generateLocalesImports(locales: Locales[] = ['en']) {
     let template = ''

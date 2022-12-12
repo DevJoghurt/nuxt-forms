@@ -1,7 +1,6 @@
 {
-    "private": true,
     "name": "nuxt-forms",
-    "version": "0.0.5",
+    "version": "0.0.7",
     "license": "MIT",
     "type": "module",
     "workspaces": [
