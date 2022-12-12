@@ -1,4 +1,5 @@
 {
+    "private": true,
     "name": "nuxt-forms",
     "version": "0.0.5",
     "license": "MIT",
@@ -24,11 +25,17 @@
     "scripts": {
         "build": "yarn dev:prepare && nuxt-module-build",
         "dev": "nuxi dev playground",
+        "dev:build": "nuxi build playground",
         "dev:prepare": "yarn nuxt-module-build --stub && nuxi prepare playground",
         "lint": "eslint --ext .js,.ts,.vue ."
     },
     "dependencies": {
-        "@nuxt/kit": "^3.0.0-rc.12"
+        "@nuxt/kit": "^3.0.0",
+        "@vee-validate/rules": "^4.7.3",
+        "@vee-validate/i18n": "^4.7.3",
+        "klona": "^2.0.5",
+        "knitwork": "^1.0.0",
+        "zod": "^3.19.1"
     },
     "devDependencies": {
         "eslint": "^8.25.0",

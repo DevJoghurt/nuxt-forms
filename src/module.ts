@@ -1,9 +1,10 @@
 import { fileURLToPath } from 'url'
-import { defineNuxtModule, createResolver, addComponent, addImports } from '@nuxt/kit'
-import type { I18nLocales } from './runtime/utils/locales'
+import { defineNuxtModule, createResolver, addComponent, addImports, addTemplate } from '@nuxt/kit'
+import { generateLocalesImports } from './templates'
+import type { Locales } from './types'
 
 export interface ModuleOptions {
-  lang: I18nLocales
+  locales: Locales[]
   /**
   * Add form based security features to your Nuxt app
   */
@@ -23,11 +24,11 @@ export default defineNuxtModule<ModuleOptions>({
     name: 'nuxt-forms',
     configKey: 'forms',
     compatibility: {
-      nuxt: '^3.0.0-rc.11'
+      nuxt: '^3.0.0'
     }
   },
   defaults: {
-    lang: 'en',
+    locales: ['en'],
     security: {
       csrf: false
     }
@@ -38,7 +39,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     // add options to public runtime
     nuxt.options.runtimeConfig.public.forms = {
-      lang: options.lang,
+      locales: options.locales,
       csrf: options.security.csrf
     }
 
@@ -46,19 +47,31 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.build.transpile.push(runtimeDir)
 
     addImports([{
-      from: resolve(runtimeDir, 'composables/form.ts'),
+      from: resolve(runtimeDir, 'composables/useForm.ts'),
       name: 'useForm'
     }, {
-      from: resolve(runtimeDir, 'composables/form.ts'),
-      name: 'useFormChild'
+      from: resolve(runtimeDir, 'composables/useField.ts'),
+      name: 'useField'
+    }, {
+      from: resolve(runtimeDir, 'composables/useValidation.ts'),
+      name: 'useValidation'
     }])
     addComponent({
       name: 'NuxtForm',
       filePath: `${resolve(runtimeDir, 'components')}/nuxt-form.vue`
     })
     addComponent({
-      name: 'FormChild',
-      filePath: `${resolve(runtimeDir, 'components')}/form-child.vue`
+      name: 'Field',
+      filePath: `${resolve(runtimeDir, 'components')}/field.vue`
     })
+
+    addTemplate({
+      write: true,
+      filename: 'form.imports.ts',
+      getContents() { 
+        return generateLocalesImports(options.locales)
+      }
+    })
+
   }
 })

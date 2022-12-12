@@ -1,80 +1,97 @@
 <template>
-  <section class="px-4 py-12 mx-auto max-w-7xl sm:px-6 md:px-12 lg:px-24 lg:py-24">
-    <div class="bg-gray-50 border-1 rounded min-h-screen">
-      <h1 class="text-red-600">
-        Test
-      </h1>
-      <div>
-        <NuxtForm
-          v-model="formdata"
-          lang="en"
-          :locales="{
-            test: 'Email must be test@test.de'
-          }"
-          :csrf="true"
-          @submit="submit"
-        >
-          <FormChild
-            v-slot="{error,value, update}"
-            v-model="email"
-            name="email"
-            :rules="['required','email',{
-              validator: (value) => {
-                return value === 'test@test.de'
-              },
-              error: 'test'
-            }
-            ]"
+    <div class="container">
+      <article>
+        <h1>Vue 3 Form</h1>
+        <div class="grid">
+          <NuxtForm
+            v-model="formData"
+            :csrf="true"
+            @submit="submit"
           >
-            <div v-if="error" class="text-red-500">
-              {{ error }}
+            <Field
+              v-slot="{errors,valid, value, updateValue}"
+              label="Email"
+              name="email"
+              :validate-on-change="true"
+              :rules="[required, email]"
+            >
+            <label>
+              Email
+              <input :value="value" :aria-invalid="!valid ? true : undefined" @input="event => updateValue((event.target as HTMLInputElement).value)">
+              <small v-if="!valid">
+                {{ errors[0] }}
+              </small>
+            </label>
+            </Field>
+            <Field 
+              v-slot="{valid, errors,value, updateValue}" 
+              :rules="[required, min(8)]"
+              :validate-on-change="true"
+              label="Password"
+              name="password">
+              <label>
+                Password
+                <input type="password" :aria-invalid="!valid ? true : undefined" :value="value" @input="event => updateValue((event.target as HTMLInputElement).value)">
+                <small v-if="!valid">
+                  {{ errors[0] }}
+                </small>         
+              </label> 
+            </Field>
+            <Field 
+              v-slot="{valid,errors,value, updateValue}" 
+              name="tel" 
+              v-model="tel"
+              :validate-on-change="true"
+              :rules="[test]">
+              <label>
+                Tel
+                <input type="tel" :aria-invalid="!valid ? true : undefined" name="tel" :value="value" @input="event => updateValue((event.target as HTMLInputElement).value)">
+                <small v-if="!valid" class="text-red-500">
+                  {{ errors[0] }}
+                </small>
+              </label>
+            </Field>
+            <Field v-slot="{valid,errors,value, updateValue}" name="privacy" :rules="[]">
+              <label>
+                Checkbox
+                <input type="checkbox" :aria-invalid="!valid ? true : undefined" name="privacy" :value="value" @input="event => updateValue((event.target as HTMLInputElement).checked)">
+                <small v-if="!valid" class="text-red-500">
+                  {{ errors[0] }}
+                </small>
+              </label>
+            </Field>
+            <div>
+              <button type="submit">
+                Submit
+              </button>
             </div>
-            <input class="w-60 h-8 border" :value="value" @input="event => update((event.target as HTMLInputElement).value)">
-          </FormChild>
-          <FormChild v-slot="{error,value, update}" name="password" :rules="['required','password']">
-            <div v-if="error" class="text-red-500">
-              {{ error }}
-            </div>
-            <input type="password" class="w-60 h-8 border" :value="value" @input="event => update((event.target as HTMLInputElement).value)">
-          </FormChild>
-          <FormChild v-slot="{error,value, update}" name="tel" :rules="['tel']">
-            <div v-if="error" class="text-red-500">
-              {{ error }}
-            </div>
-            <input type="tel" class="w-60 h-8 border" name="tel" :value="value" @input="event => update((event.target as HTMLInputElement).value)">
-          </FormChild>
-          <FormChild v-slot="{error,value, update}" name="privacy" :rules="['approval']">
-            <div class="relative flex items-start mt-2">
-              <div v-if="error" class="text-red-500">
-                {{ error }}
-              </div>
-              <div class="flex h-5 items-center">
-                <input aria-describedby="comments-description" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" :value="value" @input="event => update((event.target as HTMLInputElement).checked)">
-              </div>
-              <div class="ml-3 text-sm">
-                <span class="text-gray-500">Test</span>
-              </div>
-            </div>
-          </FormChild>
-          <div>
-            <button type="submit" class="w-60 h-8 border">
-              Submit
-            </button>
-          </div>
-        </NuxtForm>
-      </div>
+          </NuxtForm>
+          <div></div>
+        </div>
+      </article>
     </div>
-  </section>
 </template>
 <script setup lang="ts">
-const formdata = ref({
+
+const formData = ref({
   email: 'max@mustermann.de'
 })
+const tel = ref('+49 123 456789')
 
-const email = ref('test1@test.de')
+const { customRule, required, email, min } = useValidation()
 
-const submit = (data) => {
+const testVal = ref('bla')
+
+const test = customRule((value: any) => {
+  if (value === testVal.value) {
+    return true
+  }
+  return `Value must be ${testVal.value}`
+})
+
+
+const submit = (data: any) => {
   // eslint-disable-next-line no-console
-  console.log(data, formdata)
+  console.log(data, formData)
 }
 </script>
