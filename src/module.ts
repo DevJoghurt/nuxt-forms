@@ -1,10 +1,10 @@
 import { fileURLToPath } from 'url'
 import { defineNuxtModule, createResolver, addComponent, addImports, addTemplate } from '@nuxt/kit'
 import { generateLocalesImports } from './templates'
-import type { Locales } from './runtime/types'
+import type { Locale } from './runtime/types'
 
 export interface ModuleOptions {
-  locales: Locales[]
+  locales: Locale[] | false
   /**
   * Add form based security features to your Nuxt app
   */

@@ -55,7 +55,8 @@ export type FormData = {
 }
 
 
-export type Locales = 
+export type Locale = 
+  | 'custom'
   | 'en'
   | 'de'
   | 'es'
@@ -67,31 +68,25 @@ export type Locales =
   | 'ru'
   | 'zh'
 
-export type RuleType = 
-  | 'alpha'
-  | 'alpha_dash'
-  | 'alpha_num'
-  | 'alpha_spaces'
-  | 'between'
-  | 'confirmed'
-  | 'digits'
-  | 'dimensions'
-  | 'email'
-  | 'ext'
-  | 'image'
-  | 'integer'
-  | 'is'
-  | 'is_not'
-  | 'length'
-  | 'max'
-  | 'max_value'
-  | 'mimes'
-  | 'min'
-  | 'min_value'
-  | 'not_one_of'
-  | 'numeric'
-  | 'one_of'
-  | 'regex'
-  | 'required'
-  | 'size'
-  | 'url'
+export type LocaleObject = {
+  code: Locale
+  messages: LocaleMessages
+}
+
+export type LocaleMessages = {
+  _default?: string
+  between?: string
+  confirmed?: string
+  email?: string
+  ext?: string
+  image?: string
+  length?: string
+  max?: string
+  min?: string
+  not_one_of?: string
+  one_of?: string
+  regex?: string
+  required?: string
+  size?: string
+  url?: string
+}

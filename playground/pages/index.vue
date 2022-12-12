@@ -78,7 +78,13 @@ const formData = ref({
 })
 const tel = ref('+49 123 456789')
 
-const { customRule, required, email, min } = useValidation()
+const { customRule, required, email, min } = useValidation({
+  customMessages:{
+    required: 'This field is required!!!',
+    email: 'This field must be a valid email!!',
+    min: 'This field must be at least {length} characters!!!'
+  }
+})
 
 const testVal = ref('bla')
 
