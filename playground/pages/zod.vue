@@ -21,7 +21,7 @@
                     <small v-if="!valid">{{errors[0]}}</small>
                   </label>  
                 </Field>
-                <Field name="others.tel" v-slot="{ valid, errors, updateValue, value}">
+                <Field name="others.tel" :validate-on-change="true" v-slot="{ valid, errors, updateValue, value}">
                     <label>
                       Tel
                       <input type="tel" :value="value" :aria-invalid="!valid ? true : undefined" @input="event => updateValue((event.target as HTMLInputElement).value)"  />
@@ -59,8 +59,8 @@ const formSchema = z.object({
   email: z.string({invalid_type_error:'Eine E-Mail ist erforderlich'}).email({message: 'Dies ist keine gültige E-Mail'}).default('jo@test.de'),
   password: z.string().min(8, {message: 'Password must be at least 8 characters long'}).max(10).default('12345678'),
   others: z.object({
-    tel: z.string({invalid_type_error:'Keine Telefonnummer'}).regex(/^\+49[0-9]{9,12}$/,{
-      message: 'Bitte eine gültige Telefonnummer eingeben'
+    tel: z.string({invalid_type_error: 'Please enter a phone number'}).regex(/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g,{
+      message: 'Please enter a valid phone number'
     }).default('+491234567890'),
     privacy: z.boolean({invalid_type_error: 'Privacy nicht gewählt'}).refine(value => value === true, {
       message: 'You must agree to the privacy policy'
@@ -71,7 +71,7 @@ const formSchema = z.object({
 const testSchema = z.string().url({message: 'This is not a valid URL'}).default('https://google.com')
 
 const modelData = ref({
-  email: ''
+  email: 'jo@test.de'
 })
 
 </script>

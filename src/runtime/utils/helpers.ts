@@ -1,3 +1,5 @@
+import type { SafeParseSuccess, SafeParseError } from 'zod'
+
 // create object and add a value with key that supports dot notation
 export const createObjectValueByKey = function (obj: any, key: string, value: any) {
     const pathArr = key.split('.')
@@ -17,6 +19,7 @@ export const createObjectValueByKey = function (obj: any, key: string, value: an
 }
 
 export function getValueByProperty<Object> (object: Object, name: String, defaultValue = null) {
+  // @ts-ignore
   const value = name.split('.').reduce((o, k) => (o || {})[k], object)
   if (typeof value === 'undefined') { return defaultValue } else { return value }
 }
@@ -49,4 +52,12 @@ export function getValueByProperty<Object> (object: Object, name: String, defaul
 
 export function isCallable(fn: unknown): fn is (...args: any[]) => any {
   return typeof fn === 'function';
+}
+
+export function isSchemaValidationSuccess<T>(validation: SafeParseSuccess<T> | SafeParseError<T>): validation is SafeParseSuccess<T> {
+  return validation.success
+}
+
+export function isSchemaValidationError<T>(validation: SafeParseSuccess<T> | SafeParseError<T>): validation is SafeParseError<T> {
+  return !validation.success
 }

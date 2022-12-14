@@ -1,5 +1,11 @@
 import { reactive, inject, onMounted, onBeforeUnmount, toRefs, isRef } from '#imports'
-import { getValueByProperty, createObjectValueByKey, interpolate, isCallable } from '../utils/helpers'
+import { 
+  getValueByProperty, 
+  createObjectValueByKey, 
+  interpolate, 
+  isCallable, 
+  isSchemaValidationError, 
+  isSchemaValidationSuccess } from '../utils/helpers'
 import { FormContextKey } from '../utils/symbols'
 import { klona } from 'klona/lite'
 import type { FieldOptions, FieldData, FormContext, ValidationRule } from '../types'
@@ -35,8 +41,7 @@ export function useField (name: string,options: FieldOptions) {
     }
 
     const validate = async () => {
-      //reset field data
-      fieldData.valid = true
+      //reset field errors
       fieldData.errors = []
 
       //form based schema validation
@@ -44,22 +49,32 @@ export function useField (name: string,options: FieldOptions) {
         // add field value to form validation object
         createObjectValueByKey(formObjectField, name, fieldData.value)
         const schemaValidation = formFieldSchema.safeParse(formObjectField)
-        if(!schemaValidation.success && !schemaValidation.error.isEmpty){
+        if(isSchemaValidationError(schemaValidation)){
           fieldData.valid = false
           for(const error of schemaValidation.error.errors){
             fieldData.errors.push(error.message)
           }
+        }else if(isSchemaValidationSuccess(schemaValidation)){
+          fieldData.valid = true
+          // overwrite field value with schema data -> this is because zod can transform data
+          // if there is a field schema defined, use default value from fieldData
+          fieldData.value = getValueByProperty(schemaValidation.data, name, fieldData.value)
         }
       }
 
       // field based schema validation
       if(options.schema){
         const schemaValidation = options.schema.safeParse(fieldData.value)
-        if(!schemaValidation.success && !schemaValidation.error.isEmpty){
+        if(isSchemaValidationError(schemaValidation)){
           fieldData.valid = false
           for(const error of schemaValidation.error.errors){
             fieldData.errors.push(error.message)
           }
+        }else if(isSchemaValidationSuccess(schemaValidation)){
+          console.log('schema success')
+          fieldData.valid = true
+          // overwrite field value with schema data -> this is because zod can transform data
+          fieldData.value = schemaValidation.data
         }
       }
 
@@ -75,6 +90,8 @@ export function useField (name: string,options: FieldOptions) {
             fieldData.valid = false
             const message = interpolate(validatationRule?.errorMessage || isValidOrError.toString(), { ...validatationRule?.params, field: options?.label || name })
             fieldData.errors.push(message)
+          }else{
+            fieldData.valid = true
           }
         }
       }
@@ -83,13 +100,14 @@ export function useField (name: string,options: FieldOptions) {
     }
   
     const updateValue = (value: any) => {
-      fieldData.valid = true
       fieldData.updated = true
       fieldData.value = value
       // validate field if validateOnChange is true
       // TODO: add debounce
       if(options.validateOnChange){
         validate()
+      }else{
+        fieldData.valid = true
       }
       // trigger onValidate callback
       if(options.onValidate){

@@ -19,8 +19,6 @@ export function useValidation(options: ValidationOptions) {
     } as LocaleObject
   }
 
-  console.log(selectedLocale)
-
   return {
     customRule: (func: ValidationRuleFunction) => {
       return () => ({

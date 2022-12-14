@@ -42,10 +42,25 @@
               name="tel" 
               v-model="tel"
               :validate-on-change="true"
-              :rules="[test]">
+              :rules="[regex('/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g')]">
               <label>
                 Tel
                 <input type="tel" :aria-invalid="!valid ? true : undefined" name="tel" :value="value" @input="event => updateValue((event.target as HTMLInputElement).value)">
+                <small v-if="!valid" class="text-red-500">
+                  {{ errors[0] }}
+                </small>
+              </label>
+            </Field>
+            <Field 
+              v-slot="{valid,errors,value, updateValue}"
+              label="Test"
+              name="test" 
+              v-model="tel"
+              :validate-on-change="true"
+              :rules="[test]">
+              <label>
+                Test
+                <input type="text" :aria-invalid="!valid ? true : undefined" name="tel" :value="value" @input="event => updateValue((event.target as HTMLInputElement).value)">
                 <small v-if="!valid" class="text-red-500">
                   {{ errors[0] }}
                 </small>
@@ -78,7 +93,7 @@ const formData = ref({
 })
 const tel = ref('+49 123 456789')
 
-const { customRule, required, email, min } = useValidation({
+const { customRule, required, email, min, regex } = useValidation({
   customMessages:{
     required: 'This field is required!!!',
     email: 'This field must be a valid email!!',
@@ -86,7 +101,7 @@ const { customRule, required, email, min } = useValidation({
   }
 })
 
-const testVal = ref('bla')
+const testVal = ref('test')
 
 const test = customRule((value: any) => {
   if (value === testVal.value) {
