@@ -9,7 +9,7 @@ import {
 import { FormContextKey } from '../utils/symbols'
 import { klona } from 'klona/lite'
 import type { FieldOptions, FieldData, FormContext, ValidationRule } from '../types'
-import { ZodTypeAny } from 'zod'
+import { ZodSchema, ZodTypeAny } from 'zod'
 
 
 export function useField (name: string,options: FieldOptions) {
@@ -25,12 +25,11 @@ export function useField (name: string,options: FieldOptions) {
     let initialData = options.initialData ? (isRef(options.initialData) ? options.initialData.value : options.initialData) : null
 
     // init form schema validation
-    let formFieldSchema = null as ZodTypeAny | null
+    let formFieldSchema = null as ZodSchema<ZodTypeAny> | null
     const formObjectField = {}
     if(formContext?.schema){
       createObjectValueByKey(formObjectField, name, true)
-      // @ts-ignore
-      formFieldSchema  = formContext.schema.pick(formObjectField)
+      formFieldSchema  = formContext.schema?.pick(formObjectField)
     }
     // if field schema is defined get default value from schema if available
     if(options.schema){

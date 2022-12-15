@@ -33,8 +33,10 @@ export type FieldContext = {
   validate: () => FieldData | Promise<FieldData>
 }
 
+export type Schema = ZodSchema<ZodObject>
+
 export type FormContext = {
-  schema?: ZodTypeAny
+  schema?: ZodObject
   bind: (field: FieldContext) => void
   unbind: (name: string) => void
 }
