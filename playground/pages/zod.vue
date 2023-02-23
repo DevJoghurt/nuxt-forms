@@ -35,6 +35,13 @@
                     <small v-if="!valid">{{errors[0]}}</small>
                   </label>
                 </Field>
+                <Field name="test" :validate-on-change="true" v-slot="{ valid, errors, updateValue, value}">
+                  <label>
+                    Test
+                    <input type="text" :value="value" :aria-invalid="!valid ? true : undefined" @input="event => updateValue((event.target as HTMLInputElement).value)"  />
+                    <small v-if="!valid">{{errors[0]}}</small>
+                  </label>
+                </Field>
                 <Field name="others.privacy" v-slot="{ valid, errors, updateValue, value}">
                   <fieldset>
                     <label>
@@ -61,11 +68,12 @@ const formSchema = z.object({
   others: z.object({
     tel: z.string({invalid_type_error: 'Please enter a phone number'}).regex(/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g,{
       message: 'Please enter a valid phone number'
-    }).default('+491234567890'),
+    }).default('01234567'),
     privacy: z.boolean({invalid_type_error: 'Privacy nicht gewählt'}).refine(value => value === true, {
       message: 'You must agree to the privacy policy'
-    }).optional()
-  }).default({})
+    })
+  }).optional(),
+  test: z.string().min(4).optional().or(z.null()).or(z.literal(''))
 })
 
 const testSchema = z.string().url({message: 'This is not a valid URL'}).default('https://google.com')

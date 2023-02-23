@@ -70,7 +70,6 @@ export function useField (name: string,options: FieldOptions) {
             fieldData.errors.push(error.message)
           }
         }else if(isSchemaValidationSuccess(schemaValidation)){
-          console.log('schema success')
           fieldData.valid = true
           // overwrite field value with schema data -> this is because zod can transform data
           fieldData.value = schemaValidation.data

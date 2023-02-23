@@ -1,6 +1,6 @@
 {
     "name": "nuxt-forms",
-    "version": "0.0.12",
+    "version": "0.0.15",
     "license": "MIT",
     "type": "module",
     "workspaces": [
@@ -13,8 +13,14 @@
     "exports": {
         ".": {
           "import": "./dist/module.mjs",
-          "require": "./dist/module.cjs",
-          "types": "./dist/runtime/types.d.ts"
+          "require": "./dist/module.cjs"
+        }
+    },
+    "typesVersions": {
+        "*": {
+            "types": [
+                "./dist/runtime/types.d.ts"
+            ]
         }
     },
     "main": "./dist/module.cjs",

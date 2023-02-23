@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   ],
   css: ['@picocss/pico/css/pico.css'],
   forms: {
-    locales: false,
+    locales: ['en', 'de'],
     security: {
       csrf: {
         cookieName: 'csrf',
