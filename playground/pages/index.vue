@@ -88,9 +88,7 @@
 </template>
 <script setup lang="ts">
 
-const formData = ref({
-  email: 'max@mustermann.de'
-})
+const formData = ref(null)
 const tel = ref('+49 123 456789')
 
 const { customRule, required, email, min, regex } = useValidation({

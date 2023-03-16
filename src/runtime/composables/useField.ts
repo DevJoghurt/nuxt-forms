@@ -88,7 +88,7 @@ export function useField (name: string,options: FieldOptions) {
             fieldData.valid = false
             const message = interpolate(validatationRule?.errorMessage || isValidOrError.toString(), { ...validatationRule?.params, field: options?.label || name })
             fieldData.errors.push(message)
-          }else{
+          }else if(fieldData.errors.length === 0){
             fieldData.valid = true
           }
         }

@@ -5,6 +5,13 @@ import type { Locale } from './runtime/types'
 
 export interface ModuleOptions {
   locales: Locale[] | false
+
+  /**
+   * Register components globally
+   * @default true
+   * @type {boolean}
+   */
+  registerComponents: boolean
   /**
   * Add form based security features to your Nuxt app
   */
@@ -29,6 +36,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   defaults: {
     locales: ['en'],
+    registerComponents: true,
     security: {
       csrf: false
     }
@@ -56,14 +64,17 @@ export default defineNuxtModule<ModuleOptions>({
       from: resolve(runtimeDir, 'composables/useValidation'),
       name: 'useValidation'
     }])
-    addComponent({
-      name: 'NuxtForm',
-      filePath: `${resolve(runtimeDir, 'components')}/nuxt-form.vue`
-    })
-    addComponent({
-      name: 'Field',
-      filePath: `${resolve(runtimeDir, 'components')}/field.vue`
-    })
+    
+    if(options.registerComponents){
+      addComponent({
+        name: 'NuxtForm',
+        filePath: `${resolve(runtimeDir, 'components')}/nuxt-form.vue`
+      })
+      addComponent({
+        name: 'Field',
+        filePath: `${resolve(runtimeDir, 'components')}/field.vue`
+      })
+    }
 
     addTemplate({
       write: true,
