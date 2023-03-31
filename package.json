@@ -1,6 +1,6 @@
 {
     "name": "nuxt-forms",
-    "version": "0.0.16",
+    "version": "0.0.18",
     "license": "MIT",
     "type": "module",
     "workspaces": [
@@ -36,17 +36,18 @@
         "lint": "eslint --ext .js,.ts,.vue ."
     },
     "dependencies": {
-        "@nuxt/kit": "^3.2.3",
-        "@vee-validate/rules": "^4.8.1",
-        "@vee-validate/i18n": "^4.8.1",
+        "@nuxt/kit": "^3.3.2",
+        "@vee-validate/rules": "^4.8.4",
+        "@vee-validate/i18n": "^4.8.3",
         "klona": "^2.0.6",
         "knitwork": "^1.0.0",
         "zod": "^3.21.4"
     },
     "devDependencies": {
         "eslint": "^8.36.0",
+        "@types/node": "^18.15.11",
         "@nuxtjs/eslint-config-typescript": "^12.0.0",
-        "@nuxt/module-builder": "^0.2.1",
-        "@nuxt/schema": "^3.2.3"
+        "@nuxt/module-builder": "latest",
+        "@nuxt/schema": "^3.3.2"
     }
 }

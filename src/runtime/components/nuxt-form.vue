@@ -1,4 +1,3 @@
-
 <template>
   <form @submit.prevent="onSubmit">
     <Csrf v-if="csrf" />
@@ -7,6 +6,7 @@
 </template>
 <script setup lang="ts">
 import Csrf from './csrf.vue'
+import { useAttrs } from 'vue'
 import { useForm } from '../composables/useForm'
 import type { ZodTypeAny } from 'zod'
 
@@ -46,8 +46,7 @@ const onSubmit = async () => {
   const result = await handleSubmit()
   if (props.modelValue) {
     emits('update:modelValue', result.value)
-  }else{
-    emits('submit', result)
   }
+  emits('submit', result)
 }
 </script>

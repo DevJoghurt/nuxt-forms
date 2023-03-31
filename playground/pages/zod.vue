@@ -6,7 +6,8 @@
           <div>
             <NuxtForm
                 :schema="formSchema"
-                v-model="modelData">
+                v-model="modelData"
+                @submit="submit">
                 <Field name="email" :validate-on-change="true" v-slot="{ valid, errors, updateValue, value}">
                   <label>
                     Email
@@ -81,5 +82,13 @@ const testSchema = z.string().url({message: 'This is not a valid URL'}).default(
 const modelData = ref({
   email: 'jo@test.de'
 })
+
+watch(modelData, (value) => {
+  console.log(value)
+})
+
+const submit = (data: any) => {
+  console.log(data)
+}
 
 </script>

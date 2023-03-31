@@ -29,14 +29,21 @@ export type FieldOptions = {
 
 export type FieldContext = {
   name: string
+  setErrors: (errors: string[]) => void
+  setValid: (valid: boolean) => void
   initializeData: (initialData: any) => void
   validate: () => FieldData | Promise<FieldData>
+}
+
+export type FieldErrors = {
+  _errors: string[]
 }
 
 export type Schema = ZodSchema<ZodObject>
 
 export type FormContext = {
-  schema?: ZodObject
+  isFormValidation: boolean
+  validate: () => FormData | Promise<FormData>
   bind: (field: FieldContext) => void
   unbind: (name: string) => void
 }

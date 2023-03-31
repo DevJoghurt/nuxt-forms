@@ -18,9 +18,8 @@ export const createObjectValueByKey = function (obj: any, key: string, value: an
     }
 }
 
-export function getValueByProperty<Object> (object: Object, name: String, defaultValue = null) {
-  // @ts-ignore
-  const value = name.split('.').reduce((o, k) => (o || {})[k], object)
+export function getValueByProperty<T>(object: Record<string, any>, name: string, defaultValue: any = null): T | Record<string, any> {
+  const value = name.split('.').reduce((o, k) => (o || {})[k], object);
   if (typeof value === 'undefined') { return defaultValue } else { return value }
 }
 

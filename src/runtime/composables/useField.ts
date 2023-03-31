@@ -1,7 +1,6 @@
 import { reactive, inject, onMounted, onBeforeUnmount, toRefs, isRef } from '#imports'
 import { 
   getValueByProperty, 
-  createObjectValueByKey, 
   interpolate, 
   isCallable, 
   isSchemaValidationError, 
@@ -9,7 +8,6 @@ import {
 import { FormContextKey } from '../utils/symbols'
 import { klona } from 'klona/lite'
 import type { FieldOptions, FieldData, FormContext, ValidationRule } from '../types'
-import { ZodSchema, ZodTypeAny } from 'zod'
 
 
 export function useField (name: string,options: FieldOptions) {
@@ -24,14 +22,10 @@ export function useField (name: string,options: FieldOptions) {
 
     let initialData = options.initialData ? (isRef(options.initialData) ? options.initialData.value : options.initialData) : null
 
-    // init form schema validation
-    let formFieldSchema = null as ZodSchema<ZodTypeAny> | null
-    const formObjectField = {}
-    if(formContext?.schema){
-      createObjectValueByKey(formObjectField, name, true)
-      formFieldSchema  = formContext.schema?.pick(formObjectField)
-    }
-    // if field schema is defined get default value from schema if available
+    /** 
+     * init form schema validatio
+     * if field schema is defined get default value from schema if available
+    */
     if(options.schema){
       const fieldSchemaValidation = options.schema.safeParse(undefined)
       if(fieldSchemaValidation.success){
@@ -42,24 +36,6 @@ export function useField (name: string,options: FieldOptions) {
     const validate = async () => {
       //reset field errors
       fieldData.errors = []
-
-      //form based schema validation
-      if(formFieldSchema){
-        // add field value to form validation object
-        createObjectValueByKey(formObjectField, name, fieldData.value)
-        const schemaValidation = formFieldSchema.safeParse(formObjectField)
-        if(isSchemaValidationError(schemaValidation)){
-          fieldData.valid = false
-          for(const error of schemaValidation.error.errors){
-            fieldData.errors.push(error.message)
-          }
-        }else if(isSchemaValidationSuccess(schemaValidation)){
-          fieldData.valid = true
-          // overwrite field value with schema data -> this is because zod can transform data
-          // if there is a field schema defined, use default value from fieldData
-          fieldData.value = getValueByProperty(schemaValidation.data, name, fieldData.value)
-        }
-      }
 
       // field based schema validation
       if(options.schema){
@@ -100,10 +76,13 @@ export function useField (name: string,options: FieldOptions) {
     const updateValue = (value: any) => {
       fieldData.updated = true
       fieldData.value = value
-      // validate field if validateOnChange is true
       // TODO: add debounce
       if(options.validateOnChange){
-        validate()
+        if(formContext?.isFormValidation){
+          formContext.validate()
+        }else{
+          validate()
+        }
       }else{
         fieldData.valid = true
       }
@@ -117,6 +96,21 @@ export function useField (name: string,options: FieldOptions) {
       if (formContext) {
         formContext.bind({
           name,
+          /**
+           * Internal function to set Errors to field
+           * @returns 
+           */
+          setErrors: (errors: string[]) => {
+            fieldData.errors = fieldData.errors.concat(errors)
+            fieldData.valid = false
+          },
+          /**
+           * Internal function to set field as valid
+           * @returns 
+           */
+          setValid: (valid: boolean) => {
+            fieldData.valid = valid
+          },
           /**
            * Internal function to validate field and return field data
            * @returns copy of fieldData
