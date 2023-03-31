@@ -79,7 +79,7 @@ export function useField (name: string,options: FieldOptions) {
       // TODO: add debounce
       if(options.validateOnChange){
         if(formContext?.isFormValidation){
-          formContext.validate()
+          formContext.validate(name)
         }else{
           validate()
         }

@@ -43,7 +43,7 @@ export type Schema = ZodSchema<ZodObject>
 
 export type FormContext = {
   isFormValidation: boolean
-  validate: () => FormData | Promise<FormData>
+  validate: (fieldName: string | null) => FormData | Promise<FormData>
   bind: (field: FieldContext) => void
   unbind: (name: string) => void
 }

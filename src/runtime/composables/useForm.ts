@@ -35,7 +35,7 @@ export function useForm (options: FormOptions) {
     }
   }
 
-  const validate = async () => {
+  const validate = async (fieldName: string | null = null) => {
     const formFields = {} as FormFields
     //reset form data
     formData.valid = true
@@ -66,6 +66,7 @@ export function useForm (options: FormOptions) {
         // add Error to formErrors
         const errors = schemaResult.error.format()
         for (const field of registeredFields) {
+          if(fieldName && fieldName !== field.name) continue
           const fieldErrors = getValueByProperty<FieldErrors>(errors, field.name)
           if(fieldErrors){
             formData.errors = formData.errors.concat(fieldErrors?._errors)
