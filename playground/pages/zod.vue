@@ -85,14 +85,29 @@ const modelData = ref({
 
 type Register = z.infer<typeof formSchema>;
 
-const { submit, loading } = useFormSubmit<Register>((formData)=>{
+  interface ErrorType {
+    code: string
+    message: string
+  }
+  interface Data {
+    bla: string
+  }
+
+
+const { submit, loading, error, data } = useFormSubmit<Register, Data, ErrorType>((formData)=>{
   console.log(formData)
   return {}
 }, {
   onSuccess: (data) => {
     console.log(data)
   },
+  onError: (error) => {
+    console.log(error)
+  }
 })
+
+console.log(data.value?.bla)
+console.log(error.value?.code)
 
 
 

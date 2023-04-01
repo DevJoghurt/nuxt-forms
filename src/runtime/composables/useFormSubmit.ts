@@ -1,22 +1,24 @@
 import type { SubmitResult } from '../types'
 import { reactive, toRefs } from 'vue'
 
-type ReturnType = {
-  loading: boolean,
-  error: any,
-  data: any
+type Options<D, E> = {
+  onSuccess?: (data: D | null) => void,
+  onError?: (error: E | null) => void
+};
+
+type ReturnType<D , E> = {
+  loading: boolean
+  error: E | null
+  data: D | null
 }
 
-export function useFormSubmit<T>(
+export function useFormSubmit<T, D = {}, E = {}>(
   submitFunction: (data: SubmitResult<T>) => void | any | Promise<any> | Promise<void>,
-  options: {
-    onSuccess?: (data: any) => void,
-    onError?: (error: any) => void
-  } = {}
+  options: Options<D, E> = {}
 ) {
-  const ret = reactive<ReturnType>({
+  const ret = reactive<ReturnType<D, E>>({
     loading: false,
-    error: false,
+    error: null,
     data: null
   })
 
@@ -29,13 +31,13 @@ export function useFormSubmit<T>(
         ret.data = await submitFunction(result)
         ret.loading = false
         if (onSuccess) {
-          onSuccess(ret.data)
+          onSuccess(ret.data as D)
         }
-      } catch (error) {
+      } catch (error: any) {
         ret.error = error
         ret.loading = false
         if (onError) {
-          onError(error)
+          onError(ret.error as E)
         }
       }
     }
