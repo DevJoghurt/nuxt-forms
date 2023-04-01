@@ -87,6 +87,7 @@ type Register = z.infer<typeof formSchema>;
 
 const { submit, loading } = useFormSubmit<Register>((formData)=>{
   console.log(formData)
+  return {}
 }, {
   onSuccess: (data) => {
     console.log(data)

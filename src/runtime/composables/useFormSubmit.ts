@@ -2,7 +2,7 @@ import type { SubmitResult } from '../types'
 import { ref } from 'vue'
 
 export function useFormSubmit<T>(
-  submitFunction: (data: SubmitResult<T>) => void | Promise<void>,
+  submitFunction: (data: SubmitResult<T>) => void | any | Promise<any> | Promise<void>,
   options: {
     onSuccess?: (data: any) => void,
     onError?: (error: any) => void
