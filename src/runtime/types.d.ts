@@ -55,14 +55,28 @@ export type FieldData = {
   value: any
 }
 
-export type FormFields = Record<string, FieldData>
-
 export type FormData = {
   valid: boolean
   errors: string[]
-  value: any
+  value: Record<string, unknown>
 }
 
+export type FormFields = {
+  [key: string]: FieldData
+}
+
+type SubmitFieldData<T> =
+  T extends Record<string, unknown> ?
+  { [K in keyof T]: SubmitFieldData<T[K]> } :
+  { valid: boolean, updated: boolean, errors: string[], value: T };
+
+type SubmitFormFields<T> =
+  T extends Record<string, unknown> ?
+  { [K in keyof T]: SubmitFormFields<T[K]> } & { [P in keyof T]: T[P] extends Record<string, unknown> ? never : SubmitFieldData<T[P]> } :
+  { [key: string]: SubmitFieldData<any> };
+
+export type SubmitResult<T> =
+  { valid: boolean, value: T, errors: string[], fields: SubmitFormFields<T> };
 
 export type Locale = 
   | 'custom'

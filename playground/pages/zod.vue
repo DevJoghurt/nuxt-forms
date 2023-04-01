@@ -83,12 +83,16 @@ const modelData = ref({
   email: 'jo@test.de'
 })
 
-watch(modelData, (value) => {
-  console.log(value)
+type Register = z.infer<typeof formSchema>;
+
+const { submit, loading } = useFormSubmit<Register>((formData)=>{
+  console.log(formData)
+}, {
+  onSuccess: (data) => {
+    console.log(data)
+  },
 })
 
-const submit = (data: any) => {
-  console.log(data)
-}
+
 
 </script>

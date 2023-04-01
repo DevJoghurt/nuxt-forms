@@ -62,6 +62,9 @@ export default defineNuxtModule<ModuleOptions>({
     }, {
       from: resolve('runtime/composables/useValidation'),
       name: 'useValidation'
+    }, {
+      from: resolve('runtime/composables/useFormSubmit'),
+      name: 'useFormSubmit'
     }])
     
     if(options.registerComponents){

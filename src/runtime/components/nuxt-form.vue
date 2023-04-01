@@ -6,27 +6,19 @@
 </template>
 <script setup lang="ts">
 import Csrf from './csrf.vue'
-import { useAttrs } from 'vue'
 import { useForm } from '../composables/useForm'
 import type { ZodTypeAny } from 'zod'
 
-
-export type SubmitResult = {
-  valid: boolean
-  value: any
-  errors: string[]
-  fields: Record<string, any>
+type FormEmits = {
+    (eventName: 'update:modelValue', value: object): void
+    (eventName: 'submit', result: any): void
 }
 
-export type FormProps = {
+type FormProps = {
   csrf?: boolean
   modelValue?: any
   clearOnSubmit?: boolean
   schema?: ZodTypeAny
-}
-export type FormEmits = {
-    (eventName: 'update:modelValue', value: object): void
-    (eventName: 'submit', result: SubmitResult): void
 }
 
 const props = withDefaults(defineProps<FormProps>(), {

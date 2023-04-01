@@ -37,18 +37,20 @@
     </div>
 </template>
 <script setup lang="ts">
-import {z} from 'zod'
+  import {z} from 'zod'
 
-const formSchema = z.object({
-  email: z.string({invalid_type_error:'Eine E-Mail ist erforderlich'}).email({message: 'Dies ist keine gültige E-Mail'}),
-  password: z.string().min(8, {message: 'Password must be at least 8 characters long'}).max(10),
-  passwordConfirm: z.string()
+  const formSchema = z.object({
+    email: z.string({invalid_type_error:'Eine E-Mail ist erforderlich'}).email({message: 'Dies ist keine gültige E-Mail'}),
+    password: z.string().min(8, {message: 'Password must be at least 8 characters long'}).max(10),
+    passwordConfirm: z.string()
   }).refine((data) => data.password === data.passwordConfirm, {
         message: "Passwords don't match",
         path: ["passwordConfirm"],
-    })
+  })
 
-    const submit = (data: any) => {
-      console.log(data)
-    }
+  type Register = z.infer<typeof formSchema>;
+
+  const { submit } = useFormSubmit<Register>((formResult)=>{
+    console.log(formResult.value)
+  })
 </script>
