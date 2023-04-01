@@ -27,6 +27,7 @@ export function useFormSubmit<T, D = {}, E = {}>(
   const submit = async (result: SubmitResult<T>) => {
     if (result.valid) {
       try {
+        ret.error = null
         ret.loading = true
         ret.data = await submitFunction(result)
         ret.loading = false
