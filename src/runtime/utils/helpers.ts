@@ -11,11 +11,7 @@ export const createObjectValueByKey = function (obj: any, key: string, value: an
         tmp = tmp[pathArr[i]]
       }
     }
-    if (Array.isArray(tmp[pathArr[i]]) && Array.isArray(value)) {
-      tmp[pathArr[i]] = tmp[pathArr[i]].concat(value)
-    }else{
-      tmp[pathArr[i]] = value
-    }
+    tmp[pathArr[i]] = value
 }
 
 export function getValueByProperty<T>(object: Record<string, any>, name: string, defaultValue: any = null): T | Record<string, any> {

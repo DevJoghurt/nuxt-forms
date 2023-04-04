@@ -98,11 +98,14 @@ const { submit, loading, error, data } = useFormSubmit<Register, Data, ErrorType
   console.log(formData)
   return {}
 }, {
+  onFormError: (formData) => {
+    console.log(formData.errors)
+  },
   onSuccess: (data) => {
     console.log(data)
   },
   onError: (error) => {
-    console.log(error)
+    console.log(error?.code)
   }
 })
 
