@@ -1,28 +1,12 @@
-import { defineNuxtModule, createResolver, addComponent, addImports, addTemplate } from '@nuxt/kit'
-import { generateLocalesImports } from './templates'
-import type { Locale } from './runtime/types'
+import { defineNuxtModule, createResolver, addComponent, addImports } from '@nuxt/kit'
 
 export interface ModuleOptions {
-  locales: Locale[] | false
-
   /**
-   * Register components globally
+   * Register components
    * @default true
    * @type {boolean}
    */
   registerComponents: boolean
-  /**
-  * Add form based security features to your Nuxt app
-  */
-  security: {
-    /**
-     * Enable CSRF protection
-     */
-    csrf: false | {
-      cookieName: string,
-      paramName: string,
-    }
-  }
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -34,21 +18,10 @@ export default defineNuxtModule<ModuleOptions>({
     }
   },
   defaults: {
-    locales: ['en'],
-    registerComponents: true,
-    security: {
-      csrf: false
-    }
+    registerComponents: true
   },
   setup (options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
-    const runtimeDir = './runtime'
-
-    // add options to public runtime
-    nuxt.options.runtimeConfig.public.forms = {
-      locales: options.locales,
-      csrf: options.security.csrf
-    }
 
     // Transpile runtime
     nuxt.options.build.transpile.push(resolve('runtime'))
@@ -66,8 +39,8 @@ export default defineNuxtModule<ModuleOptions>({
       from: resolve('runtime/composables/useFormSubmit'),
       name: 'useFormSubmit'
     }])
-    
-    if(options.registerComponents){
+
+    if (options.registerComponents) {
       addComponent({
         name: 'NuxtForm',
         filePath: resolve('runtime/components/nuxt-form.vue')
@@ -77,14 +50,5 @@ export default defineNuxtModule<ModuleOptions>({
         filePath: resolve('runtime/components/field.vue')
       })
     }
-
-    addTemplate({
-      write: true,
-      filename: 'form.imports.ts',
-      getContents() { 
-        return generateLocalesImports(options.locales)
-      }
-    })
-
   }
 })

@@ -1,18 +1,26 @@
 import type { ZodTypeAny, ZodObject } from 'zod'
+import type { InjectionKey } from 'vue'
 
 // Rule types
+export type ValidationParams = Record<string, unknown> | unknown[] | null
+
+export type ErrorMessage = string | null | undefined |  Partial<Record<string, string>>
+
+
 export type ValidationRuleFunction = (
   value: unknown,
-  params:  Record<string, unknown> | unknown[] | null
+  params:  any
 ) => boolean | string | Promise<boolean | string>
 
 export type ValidationRule = {
-  errorMessage: string | null | undefined
-  params: Record<string, unknown> | unknown[] | null
+  errorMessage: ErrorMessage
+  params: ValidationParams
   validate: ValidationRuleFunction
 }
 
 export type FormOptions = {
+  lang?: string
+  key?: InjectionKey<FormContext>
   initialData?: object | null
   clearOnSubmit?: boolean
   schema?: ZodTypeAny
@@ -42,6 +50,7 @@ export type FieldErrors = {
 export type Schema = ZodSchema<ZodObject>
 
 export type FormContext = {
+  lang: string | undefined
   isFormValidation: boolean
   validate: (fieldName: string | null) => FormData | Promise<FormData>
   bind: (field: FieldContext) => void
@@ -77,39 +86,3 @@ type SubmitFormFields<T> =
 
 export type SubmitResult<T> =
   { valid: boolean, value: T, errors: string[], fields: SubmitFormFields<T> };
-
-export type Locale = 
-  | 'custom'
-  | 'en'
-  | 'de'
-  | 'es'
-  | 'fr'
-  | 'it'
-  | 'ja'
-  | 'ko'
-  | 'pt'
-  | 'ru'
-  | 'zh'
-
-export type LocaleObject = {
-  code: Locale
-  messages: LocaleMessages
-}
-
-export type LocaleMessages = {
-  _default?: string
-  between?: string
-  confirmed?: string
-  email?: string
-  ext?: string
-  image?: string
-  length?: string
-  max?: string
-  min?: string
-  not_one_of?: string
-  one_of?: string
-  regex?: string
-  required?: string
-  size?: string
-  url?: string
-}

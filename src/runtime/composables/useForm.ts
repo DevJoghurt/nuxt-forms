@@ -1,9 +1,8 @@
-import { provide, reactive, toRefs, isRef } from '#imports'
+import { klona } from 'klona/lite'
 import { FormContextKey } from '../utils/symbols'
 import { createObjectValueByKey, getValueByProperty } from '../utils/helpers'
-import { klona } from 'klona/lite'
 import type { FormOptions, FieldContext, FormContext, FormData, FormFields, FieldData, FieldErrors } from '../types'
-
+import { provide, reactive, toRefs, isRef } from '#imports'
 
 export function useForm (options: FormOptions) {
   const registeredFields = reactive([]) as FieldContext[]
@@ -14,13 +13,13 @@ export function useForm (options: FormOptions) {
     value: {}
   })
 
-  let initialData = options.initialData ? Object.assign({}, isRef(options.initialData) ? options.initialData.value : options.initialData ) : {}
-  //if schema is defined, validate schema with initial data -> this will add default values to initial data
-  if(options.schema){
-      const schemaDefaultData = options.schema.optional().safeParse(initialData)
-      if(schemaDefaultData.success){
-        initialData = Object.assign({}, schemaDefaultData.data)
-      }
+  let initialData = options.initialData ? Object.assign({}, isRef(options.initialData) ? options.initialData.value : options.initialData) : {}
+  // if schema is defined, validate schema with initial data -> this will add default values to initial data
+  if (options.schema) {
+    const schemaDefaultData = options.schema.optional().safeParse(initialData)
+    if (schemaDefaultData.success) {
+      initialData = Object.assign({}, schemaDefaultData.data)
+    }
   }
 
   const bind = (field: FieldContext) => {
@@ -37,7 +36,7 @@ export function useForm (options: FormOptions) {
 
   const validate = async (fieldName: string | null = null) => {
     const formFields = {} as FormFields
-    //reset form data
+    // reset form data
     formData.valid = true
     formData.errors = []
 
@@ -50,11 +49,11 @@ export function useForm (options: FormOptions) {
       /**
        * Create objects
        */
-      //add field values to formData
+      // add field values to formData
       createObjectValueByKey(formData.value, field.name, fieldData.value)
-      //add field errors to formData
+      // add field errors to formData
       formData.errors = formData.errors.concat(fieldData.errors)
-      //add all field data to formFields
+      // add all field data to formFields
       createObjectValueByKey(formFields, field.name, fieldData)
     }
 
@@ -66,20 +65,21 @@ export function useForm (options: FormOptions) {
         // add Error to formErrors
         const errors = schemaResult.error.format()
         for (const field of registeredFields) {
-          if(fieldName && fieldName !== field.name) continue
+          if (fieldName && fieldName !== field.name) { continue }
           const fieldErrors = getValueByProperty<FieldErrors>(errors, field.name)
-          if(fieldErrors){
+          if (fieldErrors) {
+            // TODO: add error message interpolation
             formData.errors = formData.errors.concat(fieldErrors?._errors)
             field.setErrors(fieldErrors?._errors || [])
             // change field
             const currentField = getValueByProperty<FieldData>(formFields, field.name)
             currentField.errors = currentField.errors.concat(fieldErrors?._errors || [])
             currentField.valid = false
-          }else{
+          } else {
             field.setValid(true)
           }
         }
-      }else{
+      } else {
         for (const field of registeredFields) {
           field.setValid(true)
         }
@@ -87,16 +87,18 @@ export function useForm (options: FormOptions) {
       }
     }
 
-    //return a non reactive copy of formData and formFields
+    // return a non reactive copy of formData and formFields
     return {
       ...klona(formData),
       fields: formFields
     }
   }
 
+  const contextKey = options.key || FormContextKey
 
-  provide<FormContext>(FormContextKey, {
-    isFormValidation: options.schema ? true : false,
+  provide<FormContext>(contextKey, {
+    isFormValidation: !!options.schema,
+    lang: options.lang,
     validate,
     bind,
     unbind

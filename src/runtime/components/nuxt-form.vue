@@ -1,13 +1,13 @@
 <template>
   <form @submit.prevent="onSubmit">
-    <Csrf v-if="csrf" />
     <slot />
   </form>
 </template>
 <script setup lang="ts">
-import Csrf from './csrf.vue'
-import { useForm } from '../composables/useForm'
 import type { ZodTypeAny } from 'zod'
+import type { InjectionKey } from 'vue'
+import { useForm } from '../composables/useForm'
+import type { FormContext } from '../types'
 
 type FormEmits = {
     (eventName: 'update:modelValue', value: object): void
@@ -15,20 +15,22 @@ type FormEmits = {
 }
 
 type FormProps = {
-  csrf?: boolean
+  lang?: string
+  contextKey?: InjectionKey<FormContext>
   modelValue?: any
   clearOnSubmit?: boolean
   schema?: ZodTypeAny
 }
 
 const props = withDefaults(defineProps<FormProps>(), {
-  csrf: false,
   clearOnSubmit: false
 })
 
 const emits = defineEmits<FormEmits>()
 
 const { handleSubmit } = useForm({
+  key: props.contextKey,
+  lang: props.lang,
   initialData: props.modelValue,
   clearOnSubmit: props.clearOnSubmit,
   schema: props.schema

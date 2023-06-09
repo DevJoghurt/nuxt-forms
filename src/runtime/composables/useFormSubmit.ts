@@ -1,5 +1,5 @@
-import type { SubmitResult } from '../types'
 import { reactive, toRefs } from 'vue'
+import type { SubmitResult } from '../types'
 
 type Options<T, D, E> = {
   onSuccess?: (data: D | null) => void,
@@ -7,14 +7,14 @@ type Options<T, D, E> = {
   onFormError?: (data: SubmitResult<T>) => void
 };
 
-type ReturnType<D , E> = {
+type ReturnType<D, E> = {
   loading: boolean
   success: boolean
   error: E | null
   data: D | null
 }
 
-export function useFormSubmit<T, D = {}, E = {}>(
+export function useFormSubmit<T, D = {}, E = {}> (
   submitFunction: (data: SubmitResult<T>) => void | any | Promise<any> | Promise<void>,
   options: Options<T, D, E> = {}
 ) {
@@ -26,7 +26,7 @@ export function useFormSubmit<T, D = {}, E = {}>(
   })
 
   const { onSuccess, onError, onFormError } = options
-  
+
   const submit = async (result: SubmitResult<T>) => {
     ret.success = false
     if (result.valid) {
@@ -46,15 +46,13 @@ export function useFormSubmit<T, D = {}, E = {}>(
           onError(ret.error as E)
         }
       }
-    }else{
-      if (onFormError) {
-        onFormError(result)
-      }
+    } else if (onFormError) {
+      onFormError(result)
     }
   }
-  
-  return { 
+
+  return {
     submit,
-    ...toRefs(ret) 
+    ...toRefs(ret)
   }
 }

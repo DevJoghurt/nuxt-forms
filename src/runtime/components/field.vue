@@ -1,13 +1,12 @@
 <template>
   <div>
-    <slot :errors="errors" :valid="valid" :value="value" :updateValue="updateValue" />
+    <slot :errors="errors" :valid="valid" :value="value" :update-value="updateValue" />
   </div>
 </template>
 <script setup lang="ts">
+import type { ZodTypeAny } from 'zod'
 import { useField } from '../composables/useField'
 import type { ValidationRule } from '../types'
-import type { ZodTypeAny } from 'zod'
-
 
 type FieldProps = {
   name: string
