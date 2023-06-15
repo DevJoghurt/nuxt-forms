@@ -44,25 +44,25 @@
   </div>
 </template>
 <script setup lang="ts">
-import { email, length } from '@vee-validate/rules'
+  import { email, length } from '@vee-validate/rules'
 
-const lang = ref('de')
+  const lang = ref('de')
 
-const formData = ref({
-  email: ''
-})
-const emailVal = useValidation2(email, 'Email is not valid')
-const passwordLength = useValidation2(length, 'Password must be {length} characters long')
-const custom = useValidation2(value => value === 'test@test.de', 'Email must be test@test.de')
+  const formData = ref({
+    email: ''
+  })
+  const emailVal = useValidation(email, 'Email is not valid')
+  const passwordLength = useValidation(length, 'Password must be {length} characters long')
+  const custom = useValidation(value => value === 'test@test.de', 'Email must be test@test.de')
 
-    type FormData = typeof formData.value
+  type FormData = typeof formData.value
 
-const { submit } = useFormSubmit<FormData>((data) => {
-  console.log(data)
-}, {
-  onSuccess (data) {
+  const { submit } = useFormSubmit<FormData>((data) => {
+    console.log(data)
+  }, {
+    onSuccess (data) {
 
-  }
-})
+    }
+  })
 
 </script>
