@@ -72,10 +72,6 @@ export function useField (name: string, options: FieldOptions) {
         if (!isValidOrError || typeof isValidOrError === 'string') {
           fieldData.valid = false
           let errorMessage = validatationRule?.errorMessage || isValidOrError.toString()
-          if (typeof errorMessage === 'object' && errorMessage !== null) {
-            const lang = formContext?.lang || 'default'
-            errorMessage = errorMessage[lang] || 'Error message not found'
-          }
           const message = interpolate(errorMessage, { ...validatationRule?.params, field: options?.label || name })
           fieldData.errors.push(message)
         } else if (fieldData.errors.length === 0) {

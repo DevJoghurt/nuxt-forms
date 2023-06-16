@@ -4,13 +4,5 @@ export default defineNuxtConfig({
     'nuxt-forms'
   ],
   css: ['@picocss/pico/css/pico.css'],
-  forms: {
-    locales: ['en', 'de'],
-    security: {
-      csrf: {
-        cookieName: 'csrf',
-        paramName: 'csrf'
-      }
-    }
-  }
+  forms: {}
 })

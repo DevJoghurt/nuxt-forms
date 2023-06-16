@@ -4,8 +4,7 @@ import type { InjectionKey } from 'vue'
 // Rule types
 export type ValidationParams = Record<string, unknown> | unknown[] | null
 
-export type ErrorMessage = string | null | undefined |  Partial<Record<string, string>>
-
+export type ErrorMessage = string | null | undefined
 
 export type ValidationRuleFunction = (
   value: unknown,
@@ -50,7 +49,6 @@ export type FieldErrors = {
 export type Schema = ZodSchema<ZodObject>
 
 export type FormContext = {
-  lang: string | undefined
   isFormValidation: boolean
   validate: (fieldName: string | null) => FormData | Promise<FormData>
   bind: (field: FieldContext) => void

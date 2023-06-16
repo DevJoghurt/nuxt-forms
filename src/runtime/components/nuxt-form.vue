@@ -15,7 +15,6 @@ type FormEmits = {
 }
 
 type FormProps = {
-  lang?: string
   contextKey?: InjectionKey<FormContext>
   modelValue?: any
   clearOnSubmit?: boolean
@@ -30,7 +29,6 @@ const emits = defineEmits<FormEmits>()
 
 const { handleSubmit } = useForm({
   key: props.contextKey,
-  lang: props.lang,
   initialData: props.modelValue,
   clearOnSubmit: props.clearOnSubmit,
   schema: props.schema

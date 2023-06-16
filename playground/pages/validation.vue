@@ -6,7 +6,6 @@
         <div>
           <NuxtForm
             v-model="formData"
-            :lang="lang"
             @submit="submit"
           >
             <div>
@@ -46,12 +45,10 @@
 <script setup lang="ts">
   import { email, length } from '@vee-validate/rules'
 
-  const lang = ref('de')
-
   const formData = ref({
     email: ''
   })
-  const emailVal = useValidation(email, 'Email is not valid')
+  const emailVal = useValidation(email, 'Email must be valid')
   const passwordLength = useValidation(length, 'Password must be {length} characters long')
   const custom = useValidation(value => value === 'test@test.de', 'Email must be test@test.de')
 

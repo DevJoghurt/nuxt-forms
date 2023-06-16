@@ -1,5 +1,0 @@
-{
-    "tailwindCSS.experimental.configFile": {
-        "playground/tailwind.config.js": "playground/**"
-    }
-}

@@ -98,7 +98,6 @@ export function useForm (options: FormOptions) {
 
   provide<FormContext>(contextKey, {
     isFormValidation: !!options.schema,
-    lang: options.lang,
     validate,
     bind,
     unbind
