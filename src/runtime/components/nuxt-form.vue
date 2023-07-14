@@ -1,13 +1,14 @@
 <template>
   <form @submit.prevent="onSubmit">
-    <slot />
+    <slot 
+      :reset="reset" 
+      :valid="valid" 
+      :errors="errors" />
   </form>
 </template>
 <script setup lang="ts">
-import type { ZodTypeAny } from 'zod'
-import type { InjectionKey } from 'vue'
+import type { AnyZodObject } from 'zod'
 import { useForm } from '../composables/useForm'
-import type { FormContext } from '../types'
 
 type FormEmits = {
     (eventName: 'update:modelValue', value: object): void
@@ -15,10 +16,9 @@ type FormEmits = {
 }
 
 type FormProps = {
-  contextKey?: InjectionKey<FormContext>
   modelValue?: any
   clearOnSubmit?: boolean
-  schema?: ZodTypeAny
+  schema?: AnyZodObject
 }
 
 const props = withDefaults(defineProps<FormProps>(), {
@@ -27,8 +27,7 @@ const props = withDefaults(defineProps<FormProps>(), {
 
 const emits = defineEmits<FormEmits>()
 
-const { handleSubmit } = useForm({
-  key: props.contextKey,
+const { handleSubmit, reset, valid, errors } = useForm({
   initialData: props.modelValue,
   clearOnSubmit: props.clearOnSubmit,
   schema: props.schema

@@ -1,24 +1,16 @@
-import { klona } from 'klona/lite'
-import type { InjectionKey } from 'vue'
 import {
   getValueByProperty,
   interpolate,
   isCallable,
   isSchemaValidationError,
   isSchemaValidationSuccess
-} from '../utils/helpers'
+} from '../utils/common'
 import { FormContextKey } from '../utils/symbols'
 import type { FieldOptions, FieldData, FormContext, ValidationRule } from '../types'
-import { reactive, inject, onMounted, onBeforeUnmount, toRefs, isRef, getCurrentInstance } from '#imports'
+import { reactive, inject, onMounted, onBeforeUnmount, toRefs, isRef, toRaw } from '#imports'
 
 export function useField (name: string, options: FieldOptions) {
-  const instace = getCurrentInstance()
-  const contextKey = instace?.parent?.props?.key as InjectionKey<FormContext> || FormContextKey
-  let formContext = null as FormContext | null
-  // @ts-ignore
-  if (!instace?.provides || instace?.provides[contextKey]) {
-    formContext = inject<FormContext>(contextKey) || null
-  }
+  let formContext = inject<FormContext>(FormContextKey) || null as FormContext | null
 
   const fieldData = reactive({
     valid: true,
@@ -28,17 +20,6 @@ export function useField (name: string, options: FieldOptions) {
   }) as FieldData
 
   let initialData = options.initialData ? (isRef(options.initialData) ? options.initialData.value : options.initialData) : null
-
-  /**
-     * init form schema validation
-     * if field schema is defined get default value from schema if available
-    */
-  if (options.schema) {
-    const fieldSchemaValidation = options.schema.safeParse(undefined)
-    if (fieldSchemaValidation.success) {
-      initialData = fieldSchemaValidation.data
-    }
-  }
 
   const validate = async () => {
     // reset field errors
@@ -63,16 +44,21 @@ export function useField (name: string, options: FieldOptions) {
 
     // rule based validation
     if (options.rules) {
+      let formData = null as any
+      // formData is null if form is not binded
+      if(options?.bindFormData && formContext){
+        formData = formContext.getData()
+      }
       for (const rule of options.rules) {
         let validatationRule = rule
         if (isCallable(validatationRule)) {
           validatationRule = validatationRule() as ValidationRule
         }
-        const isValidOrError = await validatationRule.validate(fieldData.value, validatationRule?.params)
+        const isValidOrError = await validatationRule.validate(fieldData.value, validatationRule?.params, formData)
         if (!isValidOrError || typeof isValidOrError === 'string') {
           fieldData.valid = false
           let errorMessage = validatationRule?.errorMessage || isValidOrError.toString()
-          const message = interpolate(errorMessage, { ...validatationRule?.params, field: options?.label || name })
+          const message = interpolate(errorMessage, { params: validatationRule?.params, field: options?.label || name })
           fieldData.errors.push(message)
         } else if (fieldData.errors.length === 0) {
           fieldData.valid = true
@@ -83,15 +69,15 @@ export function useField (name: string, options: FieldOptions) {
     return fieldData.valid
   }
 
-  const updateValue = (value: any) => {
+  const updateValue = async (value: any) => {
     fieldData.updated = true
     fieldData.value = value
-    // TODO: add debounce
+    // TODO: check if debounce is needed
     if (options.validateOnChange) {
-      if (formContext?.isFormValidation) {
-        formContext.validate(name)
-      } else {
-        validate()
+      if (formContext?.isFormValidation || (formContext && options.validateOnChange === 'form')) {
+        await formContext.validate(name)
+      }else{
+        await validate()
       }
     } else {
       fieldData.valid = true
@@ -107,39 +93,58 @@ export function useField (name: string, options: FieldOptions) {
       formContext.bind({
         name,
         /**
-           * Internal function to set Errors to field
-           * @returns
-           */
+         * Internal function to set Errors to field
+         * @returns
+         */
         setErrors: (errors: string[]) => {
           fieldData.errors = fieldData.errors.concat(errors)
           fieldData.valid = false
         },
         /**
-           * Internal function to set field as valid
-           * @returns
-           */
+         * Internal function to set field as valid
+         * @returns
+         */
         setValid: (valid: boolean) => {
           fieldData.valid = valid
         },
         /**
-           * Internal function to validate field and return field data
-           * @returns copy of fieldData
-           **/
+         * Internal function to get field data
+         * @returns 
+         */
+        getData: () => {
+          return fieldData.value
+        },
+        /**
+         * Internal function to validate field and return field data
+         * @returns copy of fieldData
+         **/
         validate: async () => {
           await validate()
           // return a non reactive copy of field data
-          return klona(fieldData)
+          const rawFieldData = toRaw(fieldData)
+          return structuredClone(rawFieldData)
         },
         /**
-           * Internal function to initialize field data from form initial data
-           * @param formInitialData
-           */
+         * Internal function to initialize field data from form initial data
+         * @param formInitialData
+         */
         initializeData: (formInitialData: any) => {
           if (!initialData && formInitialData !== null) {
             fieldData.value = getValueByProperty(formInitialData, name, null)
+            initialData = fieldData.value
           } else {
             fieldData.value = initialData
           }
+        },
+        /**
+         * Internal function to reset field data
+         * @returns
+         * */
+        reset: () => {
+          fieldData.updated = false
+          fieldData.value = initialData
+          fieldData.valid = true
+          fieldData.errors = []
         }
       })
     }

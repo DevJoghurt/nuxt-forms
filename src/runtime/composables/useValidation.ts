@@ -1,7 +1,12 @@
-import type { ValidationRule, ValidationRuleFunction, ErrorMessage, ValidationParams } from '../types.js'
+import type { ValidatorRuleParams, ValidatorParams, Validator, ErrorMessage } from '../types'
 
-export function useValidation (validationFunction: ValidationRuleFunction, error: ErrorMessage = null) {
-  return (params: ValidationParams = null): ValidationRule => ({
+type ValidationRuleFunction = keyof ValidatorRuleParams | Validator
+
+export function useValidation<T extends ValidationRuleFunction>(
+  validationFunction: T,
+  error: ErrorMessage = null
+) {
+  return (params?: ValidatorParams<T>) => ({
     errorMessage: error || 'Error',
     params,
     validate: validationFunction

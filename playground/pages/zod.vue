@@ -5,7 +5,7 @@
       <div class="grid">
         <div>
           <NuxtForm
-            v-model="modelData"
+            v-model="zodDefaults"
             :schema="formSchema"
             @submit="submit"
           >
@@ -23,21 +23,33 @@
                 <small v-if="!valid">{{ errors[0] }}</small>
               </label>
             </Field>
-            <Field v-slot="{ valid, errors, updateValue, value}" name="others.tel" :validate-on-change="true">
+            <Field 
+              v-slot="{ valid, errors, updateValue, value}" 
+              name="others.tel" 
+              :validate-on-change="true">
               <label>
                 Tel
                 <input type="tel" :value="value" :aria-invalid="!valid ? true : undefined" @input="event => updateValue((event.target as HTMLInputElement).value)">
                 <small v-if="!valid">{{ errors[0] }}</small>
               </label>
             </Field>
-            <Field v-slot="{ valid, errors, updateValue, value}" name="url" :schema="testSchema" :validate-on-change="true">
+            <Field 
+              v-slot="{ valid, errors, updateValue, value}" 
+              name="url" 
+              :schema="testSchema" 
+              :validate-on-change="true">
               <label>
                 Url
                 <input type="text" :value="value" :aria-invalid="!valid ? true : undefined" @input="event => updateValue((event.target as HTMLInputElement).value)">
                 <small v-if="!valid">{{ errors[0] }}</small>
               </label>
             </Field>
-            <Field v-slot="{ valid, errors, updateValue, value}" name="test" :validate-on-change="true">
+            <Field 
+              v-slot="{ valid, errors, updateValue, value}"
+              :rules="[equalToField('others.tel')]" 
+              name="others.test"
+              :bind-form-data="true" 
+              :validate-on-change="true">
               <label>
                 Test
                 <input type="text" :value="value" :aria-invalid="!valid ? true : undefined" @input="event => updateValue((event.target as HTMLInputElement).value)">
@@ -67,7 +79,7 @@
 import { z } from 'zod'
 
 const formSchema = z.object({
-  email: z.string({ invalid_type_error: 'Eine E-Mail ist erforderlich' }).email({ message: 'Dies ist keine gültige E-Mail' }).default('jo@test.de'),
+  email: z.string({ invalid_type_error: 'Eine E-Mail ist erforderlich' }).email({ message: 'Dies ist keine gültige E-Mail' }).default('test@test.de'),
   password: z.string().min(8, { message: 'Password must be at least 8 characters long' }).max(10).default('12345678'),
   others: z.object({
     tel: z.string({ invalid_type_error: 'Please enter a phone number' }).regex(/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g, {
@@ -75,30 +87,38 @@ const formSchema = z.object({
     }).default('01234567'),
     privacy: z.boolean({ invalid_type_error: 'Privacy nicht gewählt' }).refine(value => value === true, {
       message: 'You must agree to the privacy policy'
-    })
-  }).optional(),
-  test: z.string().min(4).optional().or(z.null()).or(z.literal(''))
+    }).default(false),
+    test: z.string().min(8).optional().or(z.null()).or(z.literal(''))
+  }).optional()
 })
 
 const testSchema = z.string().url({ message: 'This is not a valid URL' }).default('https://google.com')
+
+const equalToField = useValidation('equalToField', 'equalToField')
 
 const modelData = ref({
   email: 'jo@test.de'
 })
 
+const zodDefaults = useZodDefaults(formSchema, modelData)
+console.log(zodDefaults)
+
 type Register = z.infer<typeof formSchema>;
 
-  interface ErrorType {
-    code: string
-    message: string
-  }
-  interface Data {
-    bla: string
-  }
+interface ErrorType {
+  code: string
+  message: string
+}
 
-const { submit, loading, error, data } = useFormSubmit<Register, Data, ErrorType>((formData) => {
+interface DataReturnType {
+  success: boolean
+}
+
+const { submit, loading, error, data } = useFormSubmit<Register, DataReturnType, ErrorType>((formData) => {
   console.log(formData)
-  return {}
+  return {
+    success: true
+  }
 }, {
   onFormError: (formData) => {
     console.log(formData.errors)
@@ -111,7 +131,7 @@ const { submit, loading, error, data } = useFormSubmit<Register, Data, ErrorType
   }
 })
 
-console.log(data.value?.bla)
+console.log(data.value?.success)
 console.log(error.value?.code)
 
 </script>

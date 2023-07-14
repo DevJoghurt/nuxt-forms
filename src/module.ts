@@ -1,4 +1,5 @@
 import { defineNuxtModule, createResolver, addComponent, addImports } from '@nuxt/kit'
+import { extendBundler } from './bundler'
 
 export interface ModuleOptions {
   /**
@@ -7,6 +8,13 @@ export interface ModuleOptions {
    * @type {boolean}
    */
   registerComponents: boolean
+
+  /**
+   * Auto import rules
+   * @default true
+   * @type {boolean}
+   */ 
+  autoImportRules?: boolean
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -18,7 +26,8 @@ export default defineNuxtModule<ModuleOptions>({
     }
   },
   defaults: {
-    registerComponents: true
+    registerComponents: true,
+    autoImportRules: true
   },
   setup (options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
@@ -38,7 +47,23 @@ export default defineNuxtModule<ModuleOptions>({
     }, {
       from: resolve('runtime/composables/useFormSubmit'),
       name: 'useFormSubmit'
+    }, {
+      from: resolve('runtime/composables/useZodDefaults'),
+      name: 'useZodDefaults'
     }])
+
+    if (options.autoImportRules) {
+      const validatorRules = ['between', 'email', 'confirmed', 'required', 'tel', 'equalToField']
+      validatorRules.forEach((rule) => {
+        addImports([{
+          from: resolve(`runtime/rules/${rule}`),
+          name: 'default',
+          as: `${rule}Validator`
+        }])
+      })
+      extendBundler(validatorRules)
+    }
+
 
     if (options.registerComponents) {
       addComponent({

@@ -1,45 +1,60 @@
-import type { ZodTypeAny, ZodObject } from 'zod'
+import type { ZodTypeAny, ZodObject, AnyZodObject } from 'zod'
 import type { InjectionKey } from 'vue'
 
 // Rule types
-export type ValidationParams = Record<string, unknown> | unknown[] | null
-
 export type ErrorMessage = string | null | undefined
 
-export type ValidationRuleFunction = (
-  value: unknown,
-  params:  any
-) => boolean | string | Promise<boolean | string>
+export type ValidatorRuleParams = {
+  'between': [string | number, string | number] | { min: number | string; max: number | string }
+  'email': undefined
+  'equalToField': string
+  'confirmed': {
+    comparative: unknown
+  }
+  'required': undefined
+  'numeric': boolean
+}
+
+export type ValidatorParams<T extends ValidationRuleFunction> = T extends keyof ValidatorRuleParams
+  ? ValidatorRuleParams[T]
+  : undefined;
+
+export type BindedFormData = Record<string, unknown>
+
+type ValidationParams = Record<string, unknown> | unknown[] | null | unknown
+
+export type Validator = (value: any, params: ValidationParams, formData: BindedFormData) => boolean | string | Promise<boolean | string>
 
 export type ValidationRule = {
   errorMessage: ErrorMessage
   params: ValidationParams
-  validate: ValidationRuleFunction
+  validate: Validator
 }
 
 export type FormOptions = {
-  lang?: string
-  key?: InjectionKey<FormContext>
   initialData?: object | null
   clearOnSubmit?: boolean
-  schema?: ZodTypeAny
+  schema?: AnyZodObject
 }
 
 export type FieldOptions = {
   initialData: any
-  schema?: ZodTypeAny
+  schema?: AnyZodObject
   rules?: (ValidationRule | (() => ValidationRule))[]
-  validateOnChange?: boolean
+  validateOnChange?: boolean | 'form' | 'field'
+  bindFormData?: boolean
   label?: string | null
   onValidate?: (value: any) => void
 }
 
 export type FieldContext = {
   name: string
+  getData: () => any
   setErrors: (errors: string[]) => void
   setValid: (valid: boolean) => void
   initializeData: (initialData: any) => void
   validate: () => FieldData | Promise<FieldData>
+  reset: () => void
 }
 
 export type FieldErrors = {
@@ -50,9 +65,11 @@ export type Schema = ZodSchema<ZodObject>
 
 export type FormContext = {
   isFormValidation: boolean
+  getData: () => Record<string, unknown>
   validate: (fieldName: string | null) => FormData | Promise<FormData>
   bind: (field: FieldContext) => void
   unbind: (name: string) => void
+  reset: () => void
 }
 
 export type FieldData = {

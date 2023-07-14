@@ -1,8 +1,7 @@
-import { klona } from 'klona/lite'
 import { FormContextKey } from '../utils/symbols'
-import { createObjectValueByKey, getValueByProperty } from '../utils/helpers'
+import { createObjectValueByKey, getValueByProperty } from '../utils/common'
 import type { FormOptions, FieldContext, FormContext, FormData, FormFields, FieldData, FieldErrors } from '../types'
-import { provide, reactive, toRefs, isRef } from '#imports'
+import { provide, reactive, toRefs, isRef, toRaw } from '#imports'
 
 export function useForm (options: FormOptions) {
   const registeredFields = reactive([]) as FieldContext[]
@@ -14,13 +13,6 @@ export function useForm (options: FormOptions) {
   })
 
   let initialData = options.initialData ? Object.assign({}, isRef(options.initialData) ? options.initialData.value : options.initialData) : {}
-  // if schema is defined, validate schema with initial data -> this will add default values to initial data
-  if (options.schema) {
-    const schemaDefaultData = options.schema.optional().safeParse(initialData)
-    if (schemaDefaultData.success) {
-      initialData = Object.assign({}, schemaDefaultData.data)
-    }
-  }
 
   const bind = (field: FieldContext) => {
     field.initializeData(initialData)
@@ -35,6 +27,7 @@ export function useForm (options: FormOptions) {
   }
 
   const validate = async (fieldName: string | null = null) => {
+    console.log('validate form', fieldName)
     const formFields = {} as FormFields
     // reset form data
     formData.valid = true
@@ -76,28 +69,54 @@ export function useForm (options: FormOptions) {
             currentField.errors = currentField.errors.concat(fieldErrors?._errors || [])
             currentField.valid = false
           } else {
-            field.setValid(true)
+            //check if rule based validation is valid
+            const currentField = getValueByProperty<FieldData>(formFields, field.name)
+            if (currentField.valid) {
+              field.setValid(true)
+            }
           }
         }
       } else {
+        // check if rule based validation is valid
+        let isFormDataValid = true
         for (const field of registeredFields) {
-          field.setValid(true)
+          const currentField = getValueByProperty<FieldData>(formFields, field.name)
+          if (currentField.valid) {
+            field.setValid(true)
+          }else{
+            isFormDataValid = false
+          }
         }
-        formData.valid = true
+        formData.valid = isFormDataValid
       }
     }
 
     // return a non reactive copy of formData and formFields
+    const rawFormData = toRaw(formData)
     return {
-      ...klona(formData),
+      ...structuredClone(rawFormData),
       fields: formFields
     }
   }
 
-  const contextKey = options.key || FormContextKey
+  const getData = () => {
+    const data = {}
+    for (const field of registeredFields) {
+      createObjectValueByKey(data, field.name, field.getData())
+    }
+    return data
+  }
 
-  provide<FormContext>(contextKey, {
+  const reset = () => {
+    for (const field of registeredFields) {
+      field.reset()
+    }
+  }
+
+  provide<FormContext>(FormContextKey, {
     isFormValidation: !!options.schema,
+    getData,
+    reset,
     validate,
     bind,
     unbind
@@ -121,10 +140,13 @@ export function useForm (options: FormOptions) {
     return result
   }
 
+
   return {
     ...toRefs(formData),
+    getData,
     initializeData,
     validate,
-    handleSubmit
+    handleSubmit,
+    reset
   }
 }
