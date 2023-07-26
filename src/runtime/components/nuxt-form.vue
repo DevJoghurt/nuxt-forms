@@ -1,9 +1,10 @@
 <template>
   <form @submit.prevent="onSubmit">
-    <slot 
-      :reset="reset" 
-      :valid="valid" 
-      :errors="errors" />
+    <slot
+      :reset="reset"
+      :valid="valid"
+      :errors="errors"
+    />
   </form>
 </template>
 <script setup lang="ts">
@@ -18,10 +19,12 @@ type FormEmits = {
 type FormProps = {
   modelValue?: any
   clearOnSubmit?: boolean
-  schema?: AnyZodObject
+  schema?: AnyZodObject | undefined
 }
 
 const props = withDefaults(defineProps<FormProps>(), {
+  modelValue: null,
+  schema: undefined,
   clearOnSubmit: false
 })
 

@@ -57,14 +57,14 @@ export function isSchemaValidationError<T> (validation: SafeParseSuccess<T> | Sa
   return !validation.success
 }
 
-export function isEmpty(value: unknown): boolean {
+export function isEmpty (value: unknown): boolean {
   if (value === null || value === undefined || value === '') {
-    return true;
+    return true
   }
 
   if (Array.isArray(value) && value.length === 0) {
-    return true;
+    return true
   }
 
-  return false;
+  return false
 }

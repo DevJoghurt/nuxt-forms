@@ -12,7 +12,7 @@ export function useForm (options: FormOptions) {
     value: {}
   })
 
-  let initialData = options.initialData ? Object.assign({}, isRef(options.initialData) ? options.initialData.value : options.initialData) : {}
+  const initialData = options.initialData ? Object.assign({}, isRef(options.initialData) ? options.initialData.value : options.initialData) : {}
 
   const bind = (field: FieldContext) => {
     field.initializeData(initialData)
@@ -27,7 +27,6 @@ export function useForm (options: FormOptions) {
   }
 
   const validate = async (fieldName: string | null = null) => {
-    console.log('validate form', fieldName)
     const formFields = {} as FormFields
     // reset form data
     formData.valid = true
@@ -69,7 +68,7 @@ export function useForm (options: FormOptions) {
             currentField.errors = currentField.errors.concat(fieldErrors?._errors || [])
             currentField.valid = false
           } else {
-            //check if rule based validation is valid
+            // check if rule based validation is valid
             const currentField = getValueByProperty<FieldData>(formFields, field.name)
             if (currentField.valid) {
               field.setValid(true)
@@ -83,7 +82,7 @@ export function useForm (options: FormOptions) {
           const currentField = getValueByProperty<FieldData>(formFields, field.name)
           if (currentField.valid) {
             field.setValid(true)
-          }else{
+          } else {
             isFormDataValid = false
           }
         }
@@ -139,7 +138,6 @@ export function useForm (options: FormOptions) {
     }
     return result
   }
-
 
   return {
     ...toRefs(formData),

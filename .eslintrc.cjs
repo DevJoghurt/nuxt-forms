@@ -5,7 +5,7 @@ module.exports = {
   ],
   rules: {
     'vue/multi-word-component-names': ['error', {
-      ignores: ['Logo','index']
+      ignores: ['Logo','index', 'field']
     }]
   }
 }

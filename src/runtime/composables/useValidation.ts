@@ -2,7 +2,7 @@ import type { ValidatorRuleParams, ValidatorParams, Validator, ErrorMessage } fr
 
 type ValidationRuleFunction = keyof ValidatorRuleParams | Validator
 
-export function useValidation<T extends ValidationRuleFunction>(
+export function useValidation<T extends ValidationRuleFunction> (
   validationFunction: T,
   error: ErrorMessage = null
 ) {

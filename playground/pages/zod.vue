@@ -23,33 +23,36 @@
                 <small v-if="!valid">{{ errors[0] }}</small>
               </label>
             </Field>
-            <Field 
-              v-slot="{ valid, errors, updateValue, value}" 
-              name="others.tel" 
-              :validate-on-change="true">
+            <Field
+              v-slot="{ valid, errors, updateValue, value}"
+              name="others.tel"
+              :validate-on-change="true"
+            >
               <label>
                 Tel
                 <input type="tel" :value="value" :aria-invalid="!valid ? true : undefined" @input="event => updateValue((event.target as HTMLInputElement).value)">
                 <small v-if="!valid">{{ errors[0] }}</small>
               </label>
             </Field>
-            <Field 
-              v-slot="{ valid, errors, updateValue, value}" 
-              name="url" 
-              :schema="testSchema" 
-              :validate-on-change="true">
+            <Field
+              v-slot="{ valid, errors, updateValue, value}"
+              name="url"
+              :schema="testSchema"
+              :validate-on-change="true"
+            >
               <label>
                 Url
                 <input type="text" :value="value" :aria-invalid="!valid ? true : undefined" @input="event => updateValue((event.target as HTMLInputElement).value)">
                 <small v-if="!valid">{{ errors[0] }}</small>
               </label>
             </Field>
-            <Field 
+            <Field
               v-slot="{ valid, errors, updateValue, value}"
-              :rules="[equalToField('others.tel')]" 
+              :rules="[equalToField('others.tel')]"
               name="others.test"
-              :bind-form-data="true" 
-              :validate-on-change="true">
+              :bind-form-data="true"
+              :validate-on-change="true"
+            >
               <label>
                 Test
                 <input type="text" :value="value" :aria-invalid="!valid ? true : undefined" @input="event => updateValue((event.target as HTMLInputElement).value)">

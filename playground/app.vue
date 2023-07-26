@@ -22,6 +22,11 @@
             Validation
           </NuxtLink>
         </li>
+        <li>
+          <NuxtLink to="/validation-test">
+            Validation Test
+          </NuxtLink>
+        </li>
       </ul>
     </nav>
     <NuxtPage />

@@ -4,6 +4,8 @@ node_modules
 cache/
 lib/
 types/
+playground/
+test/
 .DS_Store
 coverage
 sw.*

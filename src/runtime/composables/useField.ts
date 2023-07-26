@@ -10,7 +10,7 @@ import type { FieldOptions, FieldData, FormContext, ValidationRule } from '../ty
 import { reactive, inject, onMounted, onBeforeUnmount, toRefs, isRef, toRaw } from '#imports'
 
 export function useField (name: string, options: FieldOptions) {
-  let formContext = inject<FormContext>(FormContextKey) || null as FormContext | null
+  const formContext = inject<FormContext>(FormContextKey) || null as FormContext | null
 
   const fieldData = reactive({
     valid: true,
@@ -46,7 +46,7 @@ export function useField (name: string, options: FieldOptions) {
     if (options.rules) {
       let formData = null as any
       // formData is null if form is not binded
-      if(options?.bindFormData && formContext){
+      if (options?.bindFormData && formContext) {
         formData = formContext.getData()
       }
       for (const rule of options.rules) {
@@ -57,7 +57,7 @@ export function useField (name: string, options: FieldOptions) {
         const isValidOrError = await validatationRule.validate(fieldData.value, validatationRule?.params, formData)
         if (!isValidOrError || typeof isValidOrError === 'string') {
           fieldData.valid = false
-          let errorMessage = validatationRule?.errorMessage || isValidOrError.toString()
+          const errorMessage = validatationRule?.errorMessage || isValidOrError.toString()
           const message = interpolate(errorMessage, { params: validatationRule?.params, field: options?.label || name })
           fieldData.errors.push(message)
         } else if (fieldData.errors.length === 0) {
@@ -76,7 +76,7 @@ export function useField (name: string, options: FieldOptions) {
     if (options.validateOnChange) {
       if (formContext?.isFormValidation || (formContext && options.validateOnChange === 'form')) {
         await formContext.validate(name)
-      }else{
+      } else {
         await validate()
       }
     } else {
@@ -109,7 +109,7 @@ export function useField (name: string, options: FieldOptions) {
         },
         /**
          * Internal function to get field data
-         * @returns 
+         * @returns
          */
         getData: () => {
           return fieldData.value

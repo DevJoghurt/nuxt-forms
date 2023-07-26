@@ -12,10 +12,10 @@ type FieldProps = {
   name: string
   label?: string | null
   modelValue?: any
-  schema?: AnyZodObject
+  schema?: AnyZodObject | undefined
   validateOnChange?: boolean | 'form' | 'field'
   bindFormData?: boolean
-  rules?: (ValidationRule | (() => ValidationRule))[]
+  rules?: (ValidationRule | (() => ValidationRule))[] | undefined
 }
 
 type FieldEmits = {
@@ -26,6 +26,9 @@ const emits = defineEmits<FieldEmits>()
 
 const props = withDefaults(defineProps<FieldProps>(), {
   name: '',
+  label: null,
+  schema: undefined,
+  rules: undefined,
   validateOnChange: false,
   modelValue: null
 })

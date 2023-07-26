@@ -9,8 +9,7 @@
     "preview": "nuxt preview"
   },
   "devDependencies": {
-    "nuxt": "^3.6.1",
-    "@vee-validate/rules": "^4.9.6",
+    "nuxt": "^3.6.5",
     "@picocss/pico": "^1.5.10",
     "nuxt-forms": "latest"
   }

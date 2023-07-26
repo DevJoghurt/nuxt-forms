@@ -13,7 +13,7 @@ export interface ModuleOptions {
    * Auto import rules
    * @default true
    * @type {boolean}
-   */ 
+   */
   autoImportRules?: boolean
 }
 
@@ -63,7 +63,6 @@ export default defineNuxtModule<ModuleOptions>({
       })
       extendBundler(validatorRules)
     }
-
 
     if (options.registerComponents) {
       addComponent({
