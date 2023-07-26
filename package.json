@@ -1,58 +1,61 @@
 {
-    "name": "nuxt-forms",
-    "private": true,
-    "version": "0.1.0",
-    "license": "MIT",
-    "type": "module",
-    "workspaces": [
-        "playground",
-        "docs"
-    ],
-    "author": {
-        "name": "Johannes Hof <johannes@disedia.com>",
-        "url": "https://github.com/DevJoghurt"
-    },
-    "exports": {
-        ".": {
-          "import": "./dist/module.mjs",
-          "require": "./dist/module.cjs"
-        }
-    },
-    "typesVersions": {
-        "*": {
-            "types": [
-                "./dist/runtime/types.d.ts"
-            ]
-        }
-    },
-    "main": "./dist/module.cjs",
-    "types": "./dist/types.d.ts",
-    "files": [
-      "dist"
-    ],
-    "scripts": {
-        "build": "yarn dev:prepare && nuxt-module-build",
-        "dev": "nuxi dev playground",
-        "docs": "nuxi dev docs",
-        "dev:build": "nuxi build playground",
-        "dev:prepare": "yarn nuxt-module-build --stub && nuxi prepare playground",
-        "lint": "eslint --ext .js,.ts,.vue ."
-    },
-    "resolutions": {
-        "nuxt-forms": "workspace:*"
-    },
-    "dependencies": {
-        "@nuxt/kit": "^3.6.1"
-    },
-    "devDependencies": {
-        "eslint": "^8.42.0",
-        "@types/node": "^20.2.5",
-        "@nuxt/test-utils": "^3.5.3",
-        "zod": "^3.21.4",
-        "vitest": "^0.32.2",
-        "@vitest/ui": "^0.32.2",
-        "@nuxtjs/eslint-config-typescript": "^12.0.0",
-        "@nuxt/module-builder": "^0.4.0",
-        "@nuxt/schema": "^3.6.1"
+  "name": "nuxt-forms",
+  "private": true,
+  "version": "0.1.1",
+  "license": "MIT",
+  "type": "module",
+  "workspaces": [
+    "playground",
+    "docs"
+  ],
+  "author": {
+    "name": "Johannes Hof <johannes@disedia.com>",
+    "url": "https://github.com/DevJoghurt"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/module.mjs",
+      "require": "./dist/module.cjs"
     }
+  },
+  "typesVersions": {
+    "*": {
+      "types": [
+        "./dist/runtime/types.d.ts"
+      ]
+    }
+  },
+  "main": "./dist/module.cjs",
+  "types": "./dist/types.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "yarn dev:prepare && nuxt-module-build",
+    "dev": "nuxi dev playground",
+    "docs": "nuxi dev docs",
+    "dev:build": "nuxi build playground",
+    "dev:prepare": "yarn nuxt-module-build --stub && nuxi prepare playground",
+    "release": "npm run lint && npm run build && changelogen --release && npm publish --access public && git push --follow-tags",
+    "lint": "eslint --ext .js,.ts,.vue .",
+    "test": "vitest"
+  },
+  "resolutions": {
+    "nuxt-forms": "workspace:*"
+  },
+  "dependencies": {
+    "@nuxt/kit": "^3.6.5"
+  },
+  "devDependencies": {
+    "eslint": "^8.45.0",
+    "@types/node": "^20.4.2",
+    "@nuxt/test-utils": "^3.6.3",
+    "zod": "^3.21.4",
+    "vitest": "^0.33.0",
+    "@vitest/ui": "^0.33.0",
+    "@nuxtjs/eslint-config-typescript": "^12.0.0",
+    "@nuxt/module-builder": "^0.4.0",
+    "@nuxt/schema": "^3.6.5",
+    "changelogen": "^0.5.4"
+  }
 }
