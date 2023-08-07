@@ -8975,10 +8975,10 @@ uvu@^0.5.0:
     kleur "^4.0.3"
     sade "^1.7.3"
 
-valibot@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/valibot/-/valibot-0.3.0.tgz#4242512fa5d158c40276464eb0fd457e06c985fd"
-  integrity sha512-zo40m35sB9tSpPnoY2MMyeVMEeAxE52mVc6Yn8QKe3BkIVxSbD/1EagpxQLQMYYpeW6ToMO6f0dMZ5faAGA+Zw==
+valibot@^0.11.1:
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/valibot/-/valibot-0.11.1.tgz#f4d301ddf791d87d51cdf31ec04408b5f12e6dc8"
+  integrity sha512-35v3J5FFHuxr/erQKASwy1VmbI9bc/GJzBd1QZWccXr3lh0xq6a/nzQfI49xBjJeHrAyFfbopr7ZT2TwkMFuPw==
 
 validate-npm-package-license@^3.0.1, validate-npm-package-license@^3.0.4:
   version "3.0.4"

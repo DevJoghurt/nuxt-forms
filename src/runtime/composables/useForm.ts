@@ -41,7 +41,6 @@ export function useForm (options: FormOptions) {
     formData.updated = true
     formData.errors = []
 
-
     // validate fields and create form data
     for (const field of registeredFields) {
       if (fieldName && fieldName !== field.name) { continue }
@@ -61,6 +60,7 @@ export function useForm (options: FormOptions) {
       // create a flatten object of all fields
       flattenedFields[field.name] = fieldData
     }
+
 
 
     // form validate if validators are defined

@@ -35,7 +35,7 @@ export default defineNuxtModule<ModuleOptions>({
     // Transpile runtime
     nuxt.options.build.transpile.push(resolve('runtime'))
 
-    const validators = ['zod', 'rule', 'custom']
+    const validators = ['zod', 'valibot', 'rule', 'custom']
 
     for(const validator of validators){
       const validatorName = `use${validator.charAt(0).toUpperCase()}${validator.slice(1)}Validator`
