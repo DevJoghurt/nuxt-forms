@@ -1,75 +1,51 @@
-import type { ZodTypeAny, ZodObject, AnyZodObject } from 'zod'
-import type { InjectionKey } from 'vue'
+// Validator types
+export type FormValues = Record<string, unknown>
 
-// Rule types
-export type ErrorMessage = string | null | undefined
+export type CustomValidator = (value: any, params: any, formValues: FormValues) => Promise<boolean> | boolean
 
-export type ValidatorRuleParams = {
-  'between': [string | number, string | number] | { min: number | string; max: number | string }
-  'email': undefined
-  'equalToField': string
-  'confirmed': {
-    comparative: unknown
-  }
-  'required': undefined
-  'numeric': boolean
+export type ValidatorType = 'rule' | 'zod' | 'valibot' | 'custom'
+
+type ValidatorError = {
+  field: string
+  form: Record<string, string>
 }
 
-export type ValidatorParams<T extends ValidationRuleFunction> = T extends keyof ValidatorRuleParams
-  ? ValidatorRuleParams[T]
+export type ValidateResult<T extends ValidationType> = {
+  success: boolean
+  error: ValidatorError[T]
+}
+
+export type ValidationParams = {
+  field?: string
+}
+export type ValidationType = 'form' | 'field'
+
+export type ValidateFunction<T extends ValidationType> = (validationType: T, data: FormValues, params?: ValidationParams) => Promise<ValidateResult<T>>
+
+export interface ValidatorAdapter<T extends ValidationType> {
+  type: ValidatorType
+  params?: any
+  initialData: FormValues
+  validate: ValidateFunction<T>
+}
+
+export type DefinedRuleParams = {
+  'between': { min: number | string; max: number | string }
+  'email': undefined
+  'equalToField': { field: string }
+  'confirmed': { comparative: unknown }
+  'required': undefined
+  'numeric': undefined
+}
+
+export type RuleParams<T> = T extends keyof DefinedRuleParams
+  ? DefinedRuleParams[T]
   : undefined;
 
-export type BindedFormData = Record<string, unknown>
-
-type ValidationParams = Record<string, unknown> | unknown[] | null | unknown
-
-export type Validator = (value: any, params: ValidationParams, formData: BindedFormData) => boolean | string | Promise<boolean | string>
-
-export type ValidationRule = {
-  errorMessage: ErrorMessage
-  params: ValidationParams
-  validate: Validator
-}
-
 export type FormOptions = {
-  initialData?: object | null
+  initialData?: FormData | null
   clearOnSubmit?: boolean
-  schema?: AnyZodObject
-}
-
-export type FieldOptions = {
-  initialData: any
-  schema?: AnyZodObject
-  rules?: (ValidationRule | (() => ValidationRule))[]
-  validateOnChange?: boolean | 'form' | 'field'
-  bindFormData?: boolean
-  label?: string | null
-  onValidate?: (value: any) => void
-}
-
-export type FieldContext = {
-  name: string
-  getData: () => any
-  setErrors: (errors: string[]) => void
-  setValid: (valid: boolean) => void
-  initializeData: (initialData: any) => void
-  validate: () => FieldData | Promise<FieldData>
-  reset: () => void
-}
-
-export type FieldErrors = {
-  _errors: string[]
-}
-
-export type Schema = ZodSchema<ZodObject>
-
-export type FormContext = {
-  isFormValidation: boolean
-  getData: () => Record<string, unknown>
-  validate: (fieldName: string | null) => FormData | Promise<FormData>
-  bind: (field: FieldContext) => void
-  unbind: (name: string) => void
-  reset: () => void
+  validate?: ValidatorAdapter | ValidatorAdapter[]
 }
 
 export type FieldData = {
@@ -79,15 +55,50 @@ export type FieldData = {
   value: any
 }
 
+export type FormFields = {
+  [key: string]: FieldData
+}
+
 export type FormData = {
+  updated: boolean
   valid: boolean
   errors: string[]
   value: Record<string, unknown>
 }
 
-export type FormFields = {
-  [key: string]: FieldData
+export type FieldContext = {
+  name: string
+  label: string | null
+  getData: () => any
+  setError: (error: string) => void
+  setValid: (valid: boolean) => void
+  initializeData: (initialData: any) => void
+  validate: () => FieldData | Promise<FieldData>
+  reset: () => void
 }
+
+export type FieldOptions = {
+  initialData: any
+  validate?: ValidatorAdapter | ValidatorAdapter[]
+  validateOnChange?: boolean | 'form' | 'field'
+  bindFormData?: boolean
+  label?: string | null
+  autoRegister?: boolean
+  onValidate?: (value: any) => void
+}
+
+export type FormContext = {
+  isFormValidation: boolean
+  getData: () => {
+    data: FormValue
+    flattenedData: FormValue
+  }
+  validate: (fieldName: string | null) => FormData | Promise<FormData>
+  register: (field: FieldContext) => void
+  unregister: (name: string) => void
+}
+
+// old types - to be checked
 
 type SubmitFieldData<T> =
   T extends Record<string, unknown> ?

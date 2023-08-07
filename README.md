@@ -1,5 +1,9 @@
-# Simple Forms for Nuxt3
+# Easy and minimal client-side form handling for Nuxt 3
+
+
 
 # Credits
 
-- Rules are based on Vee Validate by @logaretm
+- Inspired by some ideas of VeeValidate (@logaretm)
+- Rules depend on VeeValidate rules by @logaretm
+- Validator adapters inspired by modular-forms (@fabian-hiller)

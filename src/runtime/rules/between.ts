@@ -1,28 +1,18 @@
-import { isEmpty } from '../utils/common'
-import { ValidatorParams } from '../types'
+import isEmpty from '../utils/isEmpty'
+import { RuleParams } from '../types'
 
-type BetweenParams = [string | number, string | number] | { min: number | string; max: number | string };
-
-function getParams (params: BetweenParams) {
-  if (Array.isArray(params)) {
-    return { min: params[0], max: params[1] }
-  }
-
-  return params
-}
-
-const betweenValidator = (value: string | number, params: ValidatorParams<'between'>): boolean => {
+const betweenRule = (value: string | number, params: RuleParams<'between'>): boolean => {
   if (isEmpty(value)) {
     return true
   }
 
-  const { min, max } = getParams(params)
+  const { min = 0, max = 10 } = params
   if (Array.isArray(value)) {
-    return value.every(val => betweenValidator(val, { min, max }))
+    return value.every(val => betweenRule(val, { min, max }))
   }
 
   const valueAsNumber = Number(value)
   return Number(min) <= valueAsNumber && Number(max) >= valueAsNumber
 }
 
-export default betweenValidator
+export default betweenRule

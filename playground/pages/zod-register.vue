@@ -5,7 +5,7 @@
       <div class="grid">
         <div>
           <NuxtForm
-            :schema="formSchema"
+            :validate="formValidator"
             @submit="submit"
           >
             <Field v-slot="{ valid, errors, updateValue, value}" name="email" :validate-on-change="true">
@@ -15,14 +15,19 @@
                 <small v-if="!valid">{{ errors[0] }}</small>
               </label>
             </Field>
-            <Field v-slot="{ valid, errors, updateValue, value}" name="password">
+            <Field 
+              v-slot="{ valid, errors, updateValue, value}" 
+              name="password"
+              validate-on-change="form">
               <label>
                 Password
                 <input type="password" :value="value" :aria-invalid="!valid ? true : undefined" @input="event => updateValue((event.target as HTMLInputElement).value)">
                 <small v-if="!valid">{{ errors[0] }}</small>
               </label>
             </Field>
-            <Field v-slot="{ valid, errors, updateValue, value}" name="passwordConfirm" :validate-on-change="true">
+            <Field v-slot="{ valid, errors, updateValue, value}" 
+              name="passwordConfirm" 
+              validate-on-change="form">
               <label>
                 Password Confirm
                 <input type="password" :value="value" :aria-invalid="!valid ? true : undefined" @input="event => updateValue((event.target as HTMLInputElement).value)">
@@ -50,6 +55,8 @@ const formSchema = z.object({
   message: "Passwords don't match",
   path: ['passwordConfirm']
 })
+
+const formValidator = useZodValidator(formSchema)
 
   type Register = z.infer<typeof formSchema>;
 

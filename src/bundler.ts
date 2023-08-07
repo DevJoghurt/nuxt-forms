@@ -13,29 +13,29 @@ export function extendBundler (validatorRules: string[]) {
 
 /*
 * This plugin is used to automatically import the validator rules
-* when the useValidation function is used with an allowed rule.
+* when the useRuleValidator function is used with an allowed rule.
 */
 const ThemeImportPlugin = createUnplugin((options: PluginOptions) => {
   return {
     name: 'form-validator-import',
     enforce: 'pre',
     transform (code) {
-      if (!code.includes('useValidation')) {
+      if (!code.includes('useRuleValidator')) {
         return null
       }
 
-      let autoImportAdded = false as boolean
+      let autoImportAdded = false as boolean;
       const updatedCode = code.replace(
-        /useValidation\(\s*((?:(?:function\s*\([\w\s,$]*\)|\([\w\s,$]*\))|[\w$]+)\s*\([^)]*\)|\([^)]*\)|[^,)]+?|\(\))\s*,\s*(['"`][^'"]*['"`])\s*\)/g,
-        (match, arg1, arg2) => {
+          /useRuleValidator\(([^,]*?)(?:,\s*({(?:[^{}]*|\{(?:[^{}]*|\{(?:[^{}]*|\{[^{}]*\})*\})*\})*}))?\)/g, 
+          (match, arg1, arg2) => {
           const phrase = arg1.slice(1, -1)
-          if (options.allowedRules.includes(phrase)) {
+          if(options.allowedRules.includes(phrase)){
             autoImportAdded = true
-            return `useValidation(${phrase}Validator${arg2 ? ', ' + arg2.trim() : ''})`
-          } else {
+            return `useRuleValidator('${phrase}'${arg2 ? ', ' + arg2.trim() : ',{} '}, ${phrase}Rule)`
+          }else{
             return match
           }
-        })
+      }) 
 
       if (autoImportAdded) {
         return {

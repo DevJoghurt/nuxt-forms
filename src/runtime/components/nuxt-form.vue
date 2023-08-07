@@ -3,37 +3,38 @@
     <slot
       :reset="reset"
       :valid="valid"
+      :updated="updated"
       :errors="errors"
     />
   </form>
 </template>
 <script setup lang="ts">
-import type { AnyZodObject } from 'zod'
 import { useForm } from '../composables/useForm'
+import type { ValidatorAdapter } from '../types'
 
-type FormEmits = {
+export type FormEmits = {
     (eventName: 'update:modelValue', value: object): void
     (eventName: 'submit', result: any): void
 }
 
-type FormProps = {
+export type FormProps = {
   modelValue?: any
   clearOnSubmit?: boolean
-  schema?: AnyZodObject | undefined
+  validate?: ValidatorAdapter<'form'> | ValidatorAdapter<'form'>[] | undefined
 }
 
 const props = withDefaults(defineProps<FormProps>(), {
   modelValue: null,
-  schema: undefined,
+  validate: undefined,
   clearOnSubmit: false
 })
 
 const emits = defineEmits<FormEmits>()
 
-const { handleSubmit, reset, valid, errors } = useForm({
+const { handleSubmit, reset, valid, errors, updated } = useForm({
   initialData: props.modelValue,
   clearOnSubmit: props.clearOnSubmit,
-  schema: props.schema
+  validate: props.validate
 })
 
 const onSubmit = async () => {

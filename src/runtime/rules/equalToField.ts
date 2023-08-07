@@ -1,12 +1,13 @@
-import { ValidatorParams, BindedFormData } from '../types'
-import { isEmpty, getValueByProperty } from '../utils/common'
+import { RuleParams, FormValues } from '../types'
+import { getValueByProperty } from '../utils/getValueByProperty'
+import isEmpty from '../utils/isEmpty'
 
-const equalToFieldValidator = (value: unknown, param: ValidatorParams<'equalToField'> = '', formData: BindedFormData) : boolean => {
+const equalToFieldRule = (value: unknown, param: RuleParams<'equalToField'> = { field: ''}, formData: FormValues) : boolean => {
   let fieldData = '' as unknown
   if (!isEmpty(formData)) {
-    fieldData = getValueByProperty(formData, param, null)
+    fieldData = getValueByProperty(formData, param.field, null)
   }
   return String(value) === String(fieldData)
 }
 
-export default equalToFieldValidator
+export default equalToFieldRule

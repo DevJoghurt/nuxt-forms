@@ -14,7 +14,7 @@
                 <Field
                   v-slot="{ valid, errors, updateValue, value}"
                   name="email"
-                  :rules="[required, emailVal,custom]"
+                  :validate="[required, emailVal,custom]"
                   :validate-on-change="true"
                 >
                   <label>
@@ -29,7 +29,7 @@
               <Field
                 v-slot="{ valid, errors, updateValue, value}"
                 name="number"
-                :rules="[between([1, 10])]"
+                :validate="[between]"
                 :validate-on-change="true"
               >
                 <label>
@@ -43,7 +43,7 @@
               <Field
                 v-slot="{ valid, errors, updateValue, value}"
                 name="password"
-                :rules="[passwordLength]"
+                :validate="[passwordLength]"
                 :validate-on-change="'form'"
               >
                 <label>
@@ -57,9 +57,9 @@
               <Field
                 v-slot="{ valid, errors, updateValue, value}"
                 name="passwordConfirm"
-                :validate-on-change="true"
+                :validate-on-change="'form'"
                 :bind-form-data="true"
-                :rules="[passwordLength, equalToField('password')]"
+                :validate="[passwordLength, equalToField]"
               >
                 <label>
                   Password Confirm
@@ -89,7 +89,7 @@
               v-slot="{ valid, errors, updateValue, value}"
               name="email2"
               context="secondFormContext"
-              :rules="[required, emailVal,custom]"
+              :validate="[required, emailVal,custom]"
               :validate-on-change="true"
             >
               <label>
@@ -114,20 +114,43 @@ const formData = ref({
   email: 'test@test.de'
 })
 
-const emailVal = useValidation((value: string) => {
+const emailVal = useCustomValidator((value: string) => {
   if (!value) { return false }
   return value.includes('@')
-}, 'Email must be valid')
-const passwordLength = useValidation((value: string) => {
+}, {
+  errorMessage: 'Email must include @'
+})
+const passwordLength = useCustomValidator((value: string, params) => {
   if (!value) { return false }
-  return value.length >= 8
-}, 'Password must be {length} characters long')
-const custom = useValidation(value => value === 'test@test.de', 'Email must be test@test.de')
+  return value.length >= params.length
+}, {
+  errorMessage: 'Password must be at least {length} characters long',
+  params: {
+    length: 6
+  }
+})
 
-const required = useValidation('required', 'Field is required')
-const between = useValidation('between', 'Field must be between 1 and 10')
+const custom = useCustomValidator(value => value === 'test@test.com', {
+  errorMessage: 'Email must "test@test.com"'
+})
 
-const equalToField = useValidation('equalToField', 'Field must be equal to {field}')
+const required = useRuleValidator('required', {
+  errorMessage: 'Field is required'
+})
+const between = useRuleValidator('between', {
+  errorMessage: 'Field must be between {min} and {max}',
+  params: {
+    max: 10,
+    min: 5
+  }
+})
+
+const equalToField = useRuleValidator('equalToField', {
+  errorMessage: 'Field must be equal to {fieldLabel}',
+  params: {
+    field: 'password'
+  }
+})
 
   type FormData = typeof formData.value
 

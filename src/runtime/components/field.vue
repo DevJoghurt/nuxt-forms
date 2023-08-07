@@ -4,45 +4,51 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { AnyZodObject } from 'zod'
-import { useField } from '../composables/useField'
-import type { ValidationRule } from '../types'
+  import { onBeforeUnmount } from '#imports'
+  import { useField } from '../composables/useField'
+  import { useFormContext } from '../composables/useFormContext'
+  import type { ValidatorAdapter } from '../types'
 
-type FieldProps = {
-  name: string
-  label?: string | null
-  modelValue?: any
-  schema?: AnyZodObject | undefined
-  validateOnChange?: boolean | 'form' | 'field'
-  bindFormData?: boolean
-  rules?: (ValidationRule | (() => ValidationRule))[] | undefined
-}
-
-type FieldEmits = {
-    (eventName: 'update:modelValue', value: object): void
-}
-
-const emits = defineEmits<FieldEmits>()
-
-const props = withDefaults(defineProps<FieldProps>(), {
-  name: '',
-  label: null,
-  schema: undefined,
-  rules: undefined,
-  validateOnChange: false,
-  modelValue: null
-})
-
-const { valid, errors, value, updateValue } = useField(props.name, {
-  initialData: props.modelValue,
-  schema: props.schema,
-  rules: props.rules,
-  validateOnChange: props.validateOnChange,
-  bindFormData: props.bindFormData,
-  label: props.label,
-  onValidate: (value) => {
-    emits('update:modelValue', value)
+  export type FieldProps = {
+    name: string
+    label?: string | null
+    modelValue?: any
+    validate?: ValidatorAdapter<'field'> | ValidatorAdapter<'field'>[] | undefined
+    validateOnChange?: boolean | 'form' | 'field'
+    bindFormData?: boolean
   }
-})
+
+  export type FieldEmits = {
+      (eventName: 'update:modelValue', value: object): void
+  }
+
+  const emits = defineEmits<FieldEmits>()
+
+  const props = withDefaults(defineProps<FieldProps>(), {
+    name: '',
+    label: null,
+    validate: undefined,
+    validateOnChange: false,
+    modelValue: null
+  })
+
+  const { valid, errors, value, updateValue, bindForm, unbindForm } = useField(props.name, {
+    initialData: props.modelValue,
+    validate: props.validate,
+    validateOnChange: props.validateOnChange,
+    bindFormData: props.bindFormData,
+    label: props.label,
+    onValidate: (value) => {
+      emits('update:modelValue', value)
+    }
+  })
+
+  const form = useFormContext()
+
+  bindForm(form)
+
+  onBeforeUnmount(() => {
+    unbindForm()
+  })
 
 </script>

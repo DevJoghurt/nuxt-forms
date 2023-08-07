@@ -35,33 +35,47 @@ export default defineNuxtModule<ModuleOptions>({
     // Transpile runtime
     nuxt.options.build.transpile.push(resolve('runtime'))
 
+    const validators = ['zod', 'rule', 'custom']
+
+    for(const validator of validators){
+      const validatorName = `use${validator.charAt(0).toUpperCase()}${validator.slice(1)}Validator`
+      addImports([{
+        from: resolve(`runtime/validators/${validatorName}`),
+        name: validatorName
+      }])
+    }
+
     addImports([{
       from: resolve('runtime/composables/useForm'),
       name: 'useForm'
     }, {
       from: resolve('runtime/composables/useField'),
       name: 'useField'
-    }, {
-      from: resolve('runtime/composables/useValidation'),
-      name: 'useValidation'
-    }, {
+    },{
       from: resolve('runtime/composables/useFormSubmit'),
       name: 'useFormSubmit'
-    }, {
-      from: resolve('runtime/composables/useZodDefaults'),
-      name: 'useZodDefaults'
+    },{
+      from: resolve('runtime/composables/useFormContext'),
+      name: 'useFormContext'
     }])
 
     if (options.autoImportRules) {
-      const validatorRules = ['between', 'email', 'confirmed', 'required', 'tel', 'equalToField']
-      validatorRules.forEach((rule) => {
+      const rules = [
+        'between', 
+        'email', 
+        'confirmed', 
+        'required', 
+        'tel', 
+        'equalToField'
+      ]
+      rules.forEach((rule) => {
         addImports([{
           from: resolve(`runtime/rules/${rule}`),
           name: 'default',
-          as: `${rule}Validator`
+          as: `${rule}Rule`
         }])
       })
-      extendBundler(validatorRules)
+      extendBundler(rules)
     }
 
     if (options.registerComponents) {

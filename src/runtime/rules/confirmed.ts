@@ -1,8 +1,8 @@
-import { ValidatorParams } from '../types'
+import { RuleParams } from '../types'
 
-const confirmedValidator = (value: unknown, param: ValidatorParams<'confirmed'> = { comparative: 'true' }) : boolean => {
+const confirmedRule = (value: unknown, param: RuleParams<'confirmed'> = { comparative: 'true' }) : boolean => {
   const { comparative } = param
   return String(value) === String(comparative)
 }
 
-export default confirmedValidator
+export default confirmedRule

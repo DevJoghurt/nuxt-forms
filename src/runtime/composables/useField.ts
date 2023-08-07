@@ -1,16 +1,17 @@
-import {
-  getValueByProperty,
-  interpolate,
-  isCallable,
-  isSchemaValidationError,
-  isSchemaValidationSuccess
-} from '../utils/common'
-import { FormContextKey } from '../utils/symbols'
-import type { FieldOptions, FieldData, FormContext, ValidationRule } from '../types'
-import { reactive, inject, onMounted, onBeforeUnmount, toRefs, isRef, toRaw } from '#imports'
+import { createObjectValueByKey } from '../utils/createObjectValueByKey'
+import { getValueByProperty } from '../utils/getValueByProperty'
+import { interpolate } from '../utils/interpolate'
+import { transformValidator } from '../utils/transformValidator'
+import type { FieldOptions, FieldData, FormContext, FieldContext, FormValues } from '../types'
+import { reactive, toRefs, unref, toRaw } from '#imports'
 
 export function useField (name: string, options: FieldOptions) {
-  const formContext = inject<FormContext>(FormContextKey) || null as FormContext | null
+  const {
+    label = null,
+    bindFormData = false 
+  } = options || {}
+
+  let formContext = null as FormContext | null
 
   const fieldData = reactive({
     valid: true,
@@ -19,49 +20,105 @@ export function useField (name: string, options: FieldOptions) {
     value: null
   }) as FieldData
 
-  let initialData = options.initialData ? (isRef(options.initialData) ? options.initialData.value : options.initialData) : null
+  const fieldValidation = transformValidator('field', options.validate)
+  // set initial field data or field validation defaults
+  let initialData = options.initialData ? unref(options.initialData) : fieldValidation.initialFieldData
+
+  // Create field context
+  const fieldContext = {
+    // Field name
+    name,
+    // Field label
+    label: label,
+    /**
+     * Internal function to set Errors to field
+     * @returns
+     */
+    setError: (error: string) => {
+      fieldData.errors.push(error)
+      fieldData.valid = false
+    },
+    /**
+     * Internal function to set field as valid
+     * @returns
+     */
+    setValid: (valid: boolean) => {
+      fieldData.valid = valid
+    },
+    /**
+     * Internal function to get field data
+     * @returns
+     */
+    getData: () => {
+      return fieldData.value
+    },
+    /**
+     * Internal function to validate field and return field data
+     * @returns copy of fieldData
+     **/
+    validate: async () => {
+      await validate()
+      // return a non reactive copy of field data
+      const rawFieldData = toRaw(fieldData)
+      return structuredClone(rawFieldData)
+    },
+    /**
+     * Internal function to initialize field data from form initial data
+     * @param formInitialData
+     */
+    initializeData: (formInitialData: any) => {
+      if (!initialData && formInitialData !== null) {
+        fieldData.value = getValueByProperty(formInitialData, name, null)
+        initialData = fieldData.value
+      } else {
+        fieldData.value = initialData
+      }
+    },
+    /**
+     * Internal function to reset field data
+     * @returns
+     * */
+    reset: () => {
+      fieldData.updated = false
+      fieldData.value = initialData
+      fieldData.valid = true
+      fieldData.errors = []
+    }
+  } as FieldContext
 
   const validate = async () => {
     // reset field errors
     fieldData.errors = []
+    fieldData.valid = true
 
-    // field based schema validation
-    if (options.schema) {
-      const schemaValidation = options.schema.safeParse(fieldData.value)
-      if (isSchemaValidationError(schemaValidation)) {
-        fieldData.valid = false
-        for (const error of schemaValidation.error.errors) {
-          // TODO: add error message interpolation
-          const message = interpolate(error.message, { ...{}, field: options?.label || name })
-          fieldData.errors.push(message)
-        }
-      } else if (isSchemaValidationSuccess(schemaValidation)) {
-        fieldData.valid = true
-        // overwrite field value with schema data -> this is because zod can transform data
-        fieldData.value = schemaValidation.data
-      }
+    let formData = {} as FormValues
+    let flattenedData = {} as FormValues
+    if(bindFormData && formContext){
+      const tmpData = formContext.getData()
+      formData = tmpData.data
+      flattenedData = flattenedData
+    }else{
+      createObjectValueByKey(formData, name, fieldData.value)
+      flattenedData[name] = fieldData.value
     }
 
-    // rule based validation
-    if (options.rules) {
-      let formData = null as any
-      // formData is null if form is not binded
-      if (options?.bindFormData && formContext) {
-        formData = formContext.getData()
-      }
-      for (const rule of options.rules) {
-        let validatationRule = rule
-        if (isCallable(validatationRule)) {
-          validatationRule = validatationRule() as ValidationRule
-        }
-        const isValidOrError = await validatationRule.validate(fieldData.value, validatationRule?.params, formData)
-        if (!isValidOrError || typeof isValidOrError === 'string') {
+    if(fieldValidation.isValidator){
+      for(const validation of fieldValidation.validations){
+        const result = await validation.validate('field', formData, {
+          field: name
+        })
+        if (result.success === false) {
           fieldData.valid = false
-          const errorMessage = validatationRule?.errorMessage || isValidOrError.toString()
-          const message = interpolate(errorMessage, { params: validatationRule?.params, field: options?.label || name })
-          fieldData.errors.push(message)
-        } else if (fieldData.errors.length === 0) {
-          fieldData.valid = true
+          if (result.error) {
+            // interpolate error message
+            const error = interpolate(result.error,{
+              ...flattenedData,
+              ...validation?.params,
+              fieldLabel: label || name,
+              fieldName: name
+            })
+            fieldData.errors.push(error)
+          }
         }
       }
     }
@@ -72,10 +129,11 @@ export function useField (name: string, options: FieldOptions) {
   const updateValue = async (value: any) => {
     fieldData.updated = true
     fieldData.value = value
+
     // TODO: check if debounce is needed
     if (options.validateOnChange) {
       if (formContext?.isFormValidation || (formContext && options.validateOnChange === 'form')) {
-        await formContext.validate(name)
+        await formContext.validate(options?.validateOnChange !== 'form' ? name : null)
       } else {
         await validate()
       }
@@ -88,77 +146,25 @@ export function useField (name: string, options: FieldOptions) {
     }
   }
 
-  onMounted(() => {
-    if (formContext) {
-      formContext.bind({
-        name,
-        /**
-         * Internal function to set Errors to field
-         * @returns
-         */
-        setErrors: (errors: string[]) => {
-          fieldData.errors = fieldData.errors.concat(errors)
-          fieldData.valid = false
-        },
-        /**
-         * Internal function to set field as valid
-         * @returns
-         */
-        setValid: (valid: boolean) => {
-          fieldData.valid = valid
-        },
-        /**
-         * Internal function to get field data
-         * @returns
-         */
-        getData: () => {
-          return fieldData.value
-        },
-        /**
-         * Internal function to validate field and return field data
-         * @returns copy of fieldData
-         **/
-        validate: async () => {
-          await validate()
-          // return a non reactive copy of field data
-          const rawFieldData = toRaw(fieldData)
-          return structuredClone(rawFieldData)
-        },
-        /**
-         * Internal function to initialize field data from form initial data
-         * @param formInitialData
-         */
-        initializeData: (formInitialData: any) => {
-          if (!initialData && formInitialData !== null) {
-            fieldData.value = getValueByProperty(formInitialData, name, null)
-            initialData = fieldData.value
-          } else {
-            fieldData.value = initialData
-          }
-        },
-        /**
-         * Internal function to reset field data
-         * @returns
-         * */
-        reset: () => {
-          fieldData.updated = false
-          fieldData.value = initialData
-          fieldData.valid = true
-          fieldData.errors = []
-        }
-      })
+  const bindForm = (form: FormContext | null) => {
+    if(form){
+      formContext = form
+      formContext.register(fieldContext)
     }
-  })
+  }
 
-  onBeforeUnmount(() => {
-    if (formContext) {
-      formContext.unbind(name)
+  const unbindForm = () => {
+    if(formContext){
+      formContext.unregister(name)
+      formContext = null
     }
-  })
+  }
 
   return {
     ...toRefs(fieldData),
     validate,
+    bindForm,
+    unbindForm,
     updateValue
   }
 }
