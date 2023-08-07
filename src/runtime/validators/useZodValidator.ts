@@ -43,7 +43,6 @@ function getDefaults<T extends z.ZodTypeAny> (
   function defaultInstance (
     schema: z.AnyZodObject | z.ZodEffects<any>
   ): z.infer<T> {
-
     function run (): z.infer<T> {
       if (schema instanceof z.ZodEffects) {
         if (schema.innerType() instanceof z.ZodEffects) {
@@ -109,9 +108,9 @@ function getDefaults<T extends z.ZodTypeAny> (
     }
     return run()
   }
-  if(schema instanceof z.ZodDefault){
+  if (schema instanceof z.ZodDefault) {
     return schema._def?.defaultValue() || null
-  }else{
+  } else {
     return defaultInstance(schema)
   }
 }
@@ -121,40 +120,41 @@ type UseZodValidatorOptions = {
   fallbackStrategy?: FallbackStrategy
 }
 
-export function useZodValidator(schema: z.AnyZodObject | z.ZodEffects<any> | z.ZodDefault<z.AnyZodObject | z.ZodString>, options: UseZodValidatorOptions = {}): ValidatorAdapter<ValidationType> {
-  
+export function useZodValidator (schema: z.AnyZodObject | z.ZodEffects<any> | z.ZodDefault<z.AnyZodObject | z.ZodString>, options: UseZodValidatorOptions = {}): ValidatorAdapter<ValidationType> {
   const { parseDefaults = false, fallbackStrategy = {} } = options
 
   let defaultData: any = null
 
-  if(parseDefaults) {
+  if (parseDefaults) {
     try {
       defaultData = getDefaults(schema, fallbackStrategy)
-    }catch(e) {
+    } catch (e) {
       console.log('error', e)
     }
   }
 
-  const validate = async (validationType:  ValidationType, data: any, params: ValidationParams | undefined): Promise<ValidateResult<ValidationType>> => {
-    if(validationType === 'field' && params?.field){
+  const validate = async (validationType: ValidationType, data: any, params: ValidationParams | undefined): Promise<ValidateResult<ValidationType>> => {
+    if (validationType === 'field' && params?.field) {
       data = getValueByProperty(data, params.field, null)
     }
     const result = await schema.safeParseAsync(data)
 
     let error = null
-    if(validationType === 'form') {
-      error = result.success ? {} : result.error.issues.reduce<any>((errors, error) => {
-        const path = error.path.join('.')
-        if (!errors[path]) {
-          errors[path] = error.message
-        }
-        return errors
-      }, {})
+    if (validationType === 'form') {
+      error = result.success
+        ? {}
+        : result.error.issues.reduce<any>((errors, error) => {
+          const path = error.path.join('.')
+          if (!errors[path]) {
+            errors[path] = error.message
+          }
+          return errors
+        }, {})
     }
-    if(validationType === 'field') {
+    if (validationType === 'field') {
       error = result.success ? '' : result.error.issues[0].message
     }
-    
+
     return {
       success: result.success,
       error
@@ -162,8 +162,8 @@ export function useZodValidator(schema: z.AnyZodObject | z.ZodEffects<any> | z.Z
   }
 
   return {
-      type: 'zod',
-      initialData: defaultData,
-      validate
+    type: 'zod',
+    initialData: defaultData,
+    validate
   }
 }

@@ -4,12 +4,12 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { onBeforeUnmount } from '#imports'
-  import { useField } from '../composables/useField'
-  import { useFormContext } from '../composables/useFormContext'
-  import type { ValidatorAdapter } from '../types'
+import { useField } from '../composables/useField'
+import { useFormContext } from '../composables/useFormContext'
+import type { ValidatorAdapter } from '../types'
+import { onBeforeUnmount } from '#imports'
 
-  export type FieldProps = {
+export type FieldProps = {
     name: string
     label?: string | null
     modelValue?: any
@@ -18,37 +18,37 @@
     bindFormData?: boolean
   }
 
-  export type FieldEmits = {
+export type FieldEmits = {
       (eventName: 'update:modelValue', value: object): void
   }
 
-  const emits = defineEmits<FieldEmits>()
+const emits = defineEmits<FieldEmits>()
 
-  const props = withDefaults(defineProps<FieldProps>(), {
-    name: '',
-    label: null,
-    validate: undefined,
-    validateOnChange: false,
-    modelValue: null
-  })
+const props = withDefaults(defineProps<FieldProps>(), {
+  name: '',
+  label: null,
+  validate: undefined,
+  validateOnChange: false,
+  modelValue: null
+})
 
-  const { valid, errors, value, updateValue, bindForm, unbindForm } = useField(props.name, {
-    initialData: props.modelValue,
-    validate: props.validate,
-    validateOnChange: props.validateOnChange,
-    bindFormData: props.bindFormData,
-    label: props.label,
-    onValidate: (value) => {
-      emits('update:modelValue', value)
-    }
-  })
+const { valid, errors, value, updateValue, bindForm, unbindForm } = useField(props.name, {
+  initialData: props.modelValue,
+  validate: props.validate,
+  validateOnChange: props.validateOnChange,
+  bindFormData: props.bindFormData,
+  label: props.label,
+  onValidate: (value) => {
+    emits('update:modelValue', value)
+  }
+})
 
-  const form = useFormContext()
+const form = useFormContext()
 
-  bindForm(form)
+bindForm(form)
 
-  onBeforeUnmount(() => {
-    unbindForm()
-  })
+onBeforeUnmount(() => {
+  unbindForm()
+})
 
 </script>

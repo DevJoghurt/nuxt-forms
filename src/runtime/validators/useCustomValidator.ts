@@ -1,7 +1,6 @@
-import { ValidatorAdapter,  ValidationType, ValidateResult, ValidationParams, CustomValidator } from '../types'
+import { ValidatorAdapter, ValidationType, ValidateResult, ValidationParams, CustomValidator } from '../types'
 import { isCallable } from '../utils/isCallable'
 import { getValueByProperty } from '../utils/getValueByProperty'
-
 
 type CustomValidatorOptions = {
   errorMessage?: string
@@ -17,24 +16,23 @@ export function useCustomValidator (
     params: undefined
   }
 ) : ValidatorAdapter<ValidationType> {
-
-  const validate = async(validationType: ValidationType, data: any, validationParams: ValidationParams | undefined): Promise<ValidateResult<ValidationType>>  => {
-    let result = {
+  const validate = async (validationType: ValidationType, data: any, validationParams: ValidationParams | undefined): Promise<ValidateResult<ValidationType>> => {
+    const result = {
       success: true,
       error: ''
     }
-    if(validationType === 'field'){
+    if (validationType === 'field') {
       let fieldData = null
-      if(validationParams?.field){
+      if (validationParams?.field) {
         fieldData = getValueByProperty(data, validationParams.field, null)
       }
-      if(isCallable(rule)){
+      if (isCallable(rule)) {
         result.success = await rule(fieldData, options.params, data)
-        if(!result.success){
+        if (!result.success) {
           result.error = options.errorMessage || 'Invalid value'
         }
       }
-    }else{
+    } else {
       console.warn('Rule validator only supports field validation')
     }
     return result

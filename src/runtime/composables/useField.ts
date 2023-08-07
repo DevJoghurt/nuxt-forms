@@ -8,7 +8,7 @@ import { reactive, toRefs, unref, toRaw } from '#imports'
 export function useField (name: string, options: FieldOptions) {
   const {
     label = null,
-    bindFormData = false 
+    bindFormData = false
   } = options || {}
 
   let formContext = null as FormContext | null
@@ -29,7 +29,7 @@ export function useField (name: string, options: FieldOptions) {
     // Field name
     name,
     // Field label
-    label: label,
+    label,
     /**
      * Internal function to set Errors to field
      * @returns
@@ -93,17 +93,17 @@ export function useField (name: string, options: FieldOptions) {
 
     let formData = {} as FormValues
     let flattenedData = {} as FormValues
-    if(bindFormData && formContext){
+    if (bindFormData && formContext) {
       const tmpData = formContext.getData()
       formData = tmpData.data
-      flattenedData = flattenedData
-    }else{
+      flattenedData = tmpData.flattenedData
+    } else {
       createObjectValueByKey(formData, name, fieldData.value)
       flattenedData[name] = fieldData.value
     }
 
-    if(fieldValidation.isValidator){
-      for(const validation of fieldValidation.validations){
+    if (fieldValidation.isValidator) {
+      for (const validation of fieldValidation.validations) {
         const result = await validation.validate('field', formData, {
           field: name
         })
@@ -111,7 +111,7 @@ export function useField (name: string, options: FieldOptions) {
           fieldData.valid = false
           if (result.error) {
             // interpolate error message
-            const error = interpolate(result.error,{
+            const error = interpolate(result.error, {
               ...flattenedData,
               ...validation?.params,
               fieldLabel: label || name,
@@ -147,14 +147,14 @@ export function useField (name: string, options: FieldOptions) {
   }
 
   const bindForm = (form: FormContext | null) => {
-    if(form){
+    if (form) {
       formContext = form
       formContext.register(fieldContext)
     }
   }
 
   const unbindForm = () => {
-    if(formContext){
+    if (formContext) {
       formContext.unregister(name)
       formContext = null
     }

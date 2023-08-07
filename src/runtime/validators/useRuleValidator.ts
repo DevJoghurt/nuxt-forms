@@ -1,7 +1,6 @@
-import { ValidatorAdapter,  DefinedRuleParams, ValidationType, CustomValidator } from '../types'
+import { ValidatorAdapter, DefinedRuleParams, ValidationType, CustomValidator } from '../types'
 import { isCallable } from '../utils/isCallable'
 import { useCustomValidator } from './useCustomValidator'
-
 
 type RuleValidatorOptions<T extends keyof DefinedRuleParams> = {
   errorMessage?: string
@@ -18,15 +17,13 @@ export function useRuleValidator<T extends keyof DefinedRuleParams> (
   },
   rule?: CustomValidator
 ) : ValidatorAdapter<ValidationType> {
-
-  if(ruleName && isCallable(rule)){
+  if (ruleName && isCallable(rule)) {
     return useCustomValidator(rule, {
       errorMessage: options.errorMessage,
       initialData: options.initialData,
       params: options.params
     })
-  }
-  else{
+  } else {
     throw new Error('Rule is not defined')
   }
 }

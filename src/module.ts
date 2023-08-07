@@ -37,7 +37,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     const validators = ['zod', 'valibot', 'rule', 'custom']
 
-    for(const validator of validators){
+    for (const validator of validators) {
       const validatorName = `use${validator.charAt(0).toUpperCase()}${validator.slice(1)}Validator`
       addImports([{
         from: resolve(`runtime/validators/${validatorName}`),
@@ -51,21 +51,21 @@ export default defineNuxtModule<ModuleOptions>({
     }, {
       from: resolve('runtime/composables/useField'),
       name: 'useField'
-    },{
+    }, {
       from: resolve('runtime/composables/useFormSubmit'),
       name: 'useFormSubmit'
-    },{
+    }, {
       from: resolve('runtime/composables/useFormContext'),
       name: 'useFormContext'
     }])
 
     if (options.autoImportRules) {
       const rules = [
-        'between', 
-        'email', 
-        'confirmed', 
-        'required', 
-        'tel', 
+        'between',
+        'email',
+        'confirmed',
+        'required',
+        'tel',
         'equalToField'
       ]
       rules.forEach((rule) => {

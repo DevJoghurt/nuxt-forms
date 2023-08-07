@@ -1,10 +1,10 @@
+import { defu } from 'defu'
 import { FormContextKey } from '../utils/symbols'
 import { createObjectValueByKey } from '../utils/createObjectValueByKey'
 import { getValueByProperty } from '../utils/getValueByProperty'
 import { transformValidator } from '../utils/transformValidator'
 import { interpolate } from '../utils/interpolate'
 import type { FormOptions, FieldContext, FormContext, FormData, FormFields, FieldData, FormValues } from '../types'
-import { defu } from 'defu'
 import { provide, reactive, toRefs, unref, toRaw } from '#imports'
 
 export function useForm (options: FormOptions) {
@@ -61,19 +61,17 @@ export function useForm (options: FormOptions) {
       flattenedFields[field.name] = fieldData
     }
 
-
-
     // form validate if validators are defined
     if (formValidation.isValidator) {
-      for(const validation of formValidation.validations) {
+      for (const validation of formValidation.validations) {
         const result = await validation.validate('form', formData.value)
         if (result.success === false) {
           formData.valid = false
           for (const field of registeredFields) {
             if (fieldName && fieldName !== field.name) { continue }
-            if(typeof result.error[field.name] !== 'undefined') {
+            if (typeof result.error[field.name] !== 'undefined') {
               // interpolate error message
-              const error = interpolate(result.error[field.name],{
+              const error = interpolate(result.error[field.name], {
                 ...flattenedFields,
                 fieldLabel: field.label,
                 fieldName: field.name

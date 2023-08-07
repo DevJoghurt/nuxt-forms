@@ -24,18 +24,18 @@ const ThemeImportPlugin = createUnplugin((options: PluginOptions) => {
         return null
       }
 
-      let autoImportAdded = false as boolean;
+      let autoImportAdded = false as boolean
       const updatedCode = code.replace(
-          /useRuleValidator\(([^,]*?)(?:,\s*({(?:[^{}]*|\{(?:[^{}]*|\{(?:[^{}]*|\{[^{}]*\})*\})*\})*}))?\)/g, 
-          (match, arg1, arg2) => {
+        /useRuleValidator\(([^,]*?)(?:,\s*({(?:[^{}]*|\{(?:[^{}]*|\{(?:[^{}]*|\{[^{}]*\})*\})*\})*}))?\)/g,
+        (match, arg1, arg2) => {
           const phrase = arg1.slice(1, -1)
-          if(options.allowedRules.includes(phrase)){
+          if (options.allowedRules.includes(phrase)) {
             autoImportAdded = true
             return `useRuleValidator('${phrase}'${arg2 ? ', ' + arg2.trim() : ',{} '}, ${phrase}Rule)`
-          }else{
+          } else {
             return match
           }
-      }) 
+        })
 
       if (autoImportAdded) {
         return {
