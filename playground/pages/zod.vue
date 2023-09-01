@@ -82,7 +82,7 @@
 import { z } from 'zod'
 
 const formSchema = z.object({
-  email: z.string({ invalid_type_error: 'Eine E-Mail ist erforderlich' }).email({ message: 'Dies ist keine gültige E-Mail' }).default('test@test.de'),
+  email: z.string({ invalid_type_error: 'You have ' }).email({ message: 'Dies ist keine gültige E-Mail' }).default('test@test.de'),
   password: z.string().min(8, { message: 'Password must be at least 8 characters long' }).max(10).default('12345678'),
   others: z.object({
     tel: z.string({ invalid_type_error: 'Please enter a phone number' }).regex(/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g, {

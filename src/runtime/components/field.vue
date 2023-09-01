@@ -6,14 +6,14 @@
 <script setup lang="ts">
 import { useField } from '../composables/useField'
 import { useFormContext } from '../composables/useFormContext'
-import type { ValidatorAdapter } from '../types'
+import type { ValidatorAdapter, ValidationType } from '../types'
 import { onBeforeUnmount } from '#imports'
 
 export type FieldProps = {
     name: string
     label?: string | null
     modelValue?: any
-    validate?: ValidatorAdapter<'field'> | ValidatorAdapter<'field'>[] | undefined
+    validate?: ValidatorAdapter<ValidationType> | ValidatorAdapter<ValidationType>[] | undefined
     validateOnChange?: boolean | 'form' | 'field'
     bindFormData?: boolean
   }

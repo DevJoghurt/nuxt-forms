@@ -10,7 +10,7 @@
 </template>
 <script setup lang="ts">
 import { useForm } from '../composables/useForm'
-import type { ValidatorAdapter } from '../types'
+import type { ValidatorAdapter, ValidationType } from '../types'
 
 export type FormEmits = {
     (eventName: 'update:modelValue', value: object): void
@@ -20,7 +20,7 @@ export type FormEmits = {
 export type FormProps = {
   modelValue?: any
   clearOnSubmit?: boolean
-  validate?: ValidatorAdapter<'form'> | ValidatorAdapter<'form'>[] | undefined
+  validate?: ValidatorAdapter<ValidationType> | ValidatorAdapter<ValidationType>[] | undefined
 }
 
 const props = withDefaults(defineProps<FormProps>(), {

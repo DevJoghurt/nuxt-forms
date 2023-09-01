@@ -24,7 +24,7 @@ import { ValidatorAdapter, ValidateResult, ValidationType, ValidationParams } fr
 
 type FallbackStrategy = {
     arrayEmpty?: boolean
-    dateEmpty?: boolean
+    dateEmpty?: boolean | string
     dateUndefined?: boolean
     dateNull?: boolean
 }

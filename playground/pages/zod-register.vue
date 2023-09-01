@@ -56,7 +56,9 @@ const formSchema = z.object({
   path: ['passwordConfirm']
 })
 
-const formValidator = useZodValidator(formSchema)
+const formValidator = useZodValidator(formSchema, {
+  parseDefaults: true
+})
 
   type Register = z.infer<typeof formSchema>;
 

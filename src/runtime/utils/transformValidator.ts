@@ -1,6 +1,19 @@
 import { ValidatorAdapter, ValidateFunction, FormValues, ValidatorType, ValidationType } from '../types'
 import { isCallable } from './isCallable'
 
+type Validations<T extends ValidationType> = {
+  type: ValidatorType
+  params: any
+  validate: ValidateFunction<T>
+}
+
+type ValidatorTransform<T extends ValidationType> = {
+  isValidator: boolean
+  initialFormData: Array<FormValues | string>
+  initialFieldData: any | null
+  validations: Validations<T>[]
+}
+
 function getAsArray<T extends ValidationType> (validators: ValidatorAdapter<T> | ValidatorAdapter<T>[] | undefined) : ValidatorAdapter<T>[] {
   // check if validators is an array and double check if it is not an object or empty array
   if (Array.isArray(validators) && validators.length && typeof validators[0] === 'object') {
@@ -12,19 +25,6 @@ function getAsArray<T extends ValidationType> (validators: ValidatorAdapter<T> |
   } else {
     return []
   }
-}
-
-type Validations<T extends ValidationType> = {
-    type: ValidatorType
-    params: any
-    validate: ValidateFunction<T>
-}
-
-type ValidatorTransform<T extends ValidationType> = {
-    isValidator: boolean
-    initialFormData: Array<FormValues | string>
-    initialFieldData: any | null
-    validations: Validations<T>[]
 }
 
 /**
