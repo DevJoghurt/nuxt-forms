@@ -7,11 +7,13 @@
     "build": "nuxi build",
     "generate": "nuxi generate",
     "preview": "nuxi preview",
+    "deploy": "vercel deploy --prod",
     "lint": "eslint ."
   },
   "devDependencies": {
-    "@nuxt-themes/docus": "^1.14.9",
-    "@nuxt/devtools": "^0.8.2",
+    "@nuxthq/studio": "^1.0.0",
+    "@nuxt-themes/docus": "^1.15.0",
+    "@nuxt/devtools": "^0.8.5",
     "@nuxt/eslint-config": "^0.1.1",
     "@types/node": "^20.5.0",
     "eslint": "^8.47.0",

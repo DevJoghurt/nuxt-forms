@@ -16,7 +16,7 @@ type ValidatorTransform<T extends ValidationType> = {
 
 function getAsArray<T extends ValidationType> (validators: ValidatorAdapter<T> | ValidatorAdapter<T>[] | undefined) : ValidatorAdapter<T>[] {
   // check if validators is an array and double check if it is not an object or empty array
-  if (Array.isArray(validators) && validators.length && typeof validators[0] === 'object') {
+  if (Array.isArray(validators) && validators.length && validators.length > 0 && typeof validators[0] === 'object') {
     // if it is an array of objects, return the array
     return validators
   } else if (typeof validators === 'object') {
