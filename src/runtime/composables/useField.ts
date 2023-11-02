@@ -126,12 +126,12 @@ export function useField (name: string, options: FieldOptions) {
     return fieldData.valid
   }
 
-  const updateValue = async (value: any) => {
+  const updateValue = async (value: any, silent: boolean = false) => {
     fieldData.updated = true
     fieldData.value = value
 
     // TODO: check if debounce is needed
-    if (options.validateOnChange) {
+    if (options.validateOnChange && !silent) {
       if (formContext?.isFormValidation || (formContext && options.validateOnChange === 'form')) {
         await formContext.validate(options?.validateOnChange !== 'form' ? name : null)
       } else {
