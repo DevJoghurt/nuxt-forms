@@ -53,7 +53,7 @@ That's it! You can now use Nuxt Forms in your Nuxt app ✨
 
 [MIT License](./LICENSE)
 
-Copyright (c) Disedia
+Copyright (c) DevJoghurt
 
 
 <!-- Badges -->
